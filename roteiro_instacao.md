@@ -2,8 +2,8 @@
 
 ## 📋 Pré-requisitos do Sistema
 - **Sistema Operacional**: Windows 10/11 (64-bit)
-- **Memória RAM**: Mínimo 8GB (recomendado 16GB)
-- **Espaço em Disco**: Mínimo 10GB livres
+- **Memória RAM**: Mínimo 16GB com emulador (recomendado 32GB)
+- **Espaço em Disco**: Mínimo 16GB livres (recomendado SSD com 32GB livres)
 - **Processador**: Intel/AMD 64-bit compatível
 - **Resolução**: Mínimo 1366x768
 
@@ -11,6 +11,7 @@
 
 ### Download e Instalação
 - Baixar a versão LTS mais recente em: 🔗 [https://nodejs.org/pt](https://nodejs.org/pt)
+- Usar Node.js 22.11 ou superior. Evitar versões ímpares, que não são LTS.
 - **IMPORTANTE**: Manter marcada a opção "Add to PATH" durante a instalação
 
 -- Se necessário, verifique o anexo 1 sobre como configurar variáveis de ambiente manualmente.
@@ -19,11 +20,11 @@
 ```bash
 # Verificar versão do Node.js
 node -v
-# Deve exibir: v20.10.0 (ou versão similar)
+# Deve exibir uma versão LTS compatível, como v22.x ou v24.x
 
 # Verificar versão do npm
 npm -v
-# Deve exibir: 10.2.4 (ou versão similar)
+# Deve exibir a versão do npm incluída com o Node.js LTS
 
 # Verificar se está no PATH (Windows)
 Get-Command node
@@ -63,17 +64,13 @@ Após a instalação, abrir o VS Code e instalar via Ctrl+Shift+X:
 - Extensões aparecem na lista (Ctrl+Shift+X)
 - Comando "code ." funciona no terminal
 
-## ⚡ 4. Instalação do Expo CLI
+## ⚡ 4. Uso do Expo CLI
 
-### Instalação Global pelo PowerShell do Windows
-```bash
-npm install -g expo-cli
-```
+Não instale o antigo `expo-cli` global. O Expo CLI acompanha o projeto e deve ser executado com `npx`.
 
-### Verificação Pós-Instalação pelo PowerShell do Windows
+### Verificação pelo PowerShell do Windows
 ```bash
-expo --version
-# Deve exibir versão como: 6.3.2
+npx expo --version
 
 # Teste de criação de projeto
 npx create-expo-app teste-instalacao
@@ -82,16 +79,17 @@ npm start
 # Deve abrir o servidor Expo no navegador
 ```
 
-## ☕ 5. Instalação do Java SE JDK 23
+## ☕ 5. Instalação do Java SE JDK 17
 
 ### Download e Instalação
-- Baixar em: 🔗 [https://download.oracle.com/java/23/latest/jdk-23_windows-x64_bin.exe](https://download.oracle.com/java/23/latest/jdk-23_windows-x64_bin.exe)
+- Instalar o Microsoft OpenJDK 17, Azul Zulu 17 ou outra distribuição compatível.
+- O JDK 17 é recomendado pelo React Native; versões superiores podem ser incompatíveis com o Gradle usado pelo projeto.
 - **CRÍTICO**: Confirmar que "Add to PATH" está marcado
 
 ### Verificação Pós-Instalação pelo PowerShell do Windows
 ```bash
 java -version
-# Deve exibir: java version "23.0.1" (ou versão similar)
+# Deve exibir: java version "17.x" (ou versão similar)
 
 javac -version
 # Deve exibir versão do compilador
@@ -108,12 +106,12 @@ echo %JAVA_HOME%
   - ✅ Android SDK
   - ✅ Android SDK Platform-Tools
   - ✅ Android Emulator
-  - ✅ Pelo menos uma imagem Android (API 34 - Android 14)
+  - ✅ Pelo menos uma imagem Android recente
 
 ### Configuração Pós-Instalação
 1. Abrir Android Studio
 2. Ir em **More Actions** → **SDK Manager**
-3. Verificar se os pacotes estão instalados
+3. Instalar **Android SDK Platform 36** e **Build-Tools 36.0.0**
 4. Em **SDK Tools**, garantir que estão marcados:
    - Android SDK Build-Tools
    - Android SDK Command-line Tools
@@ -123,7 +121,7 @@ echo %JAVA_HOME%
 ### Criação do Emulador
 1. **More Actions** → **Virtual Device Manager**
 2. **Create Device** → **Pixel 5** → **Next**
-3. Selecionar **Android 14 (API 34)** → **Finish**
+3. Selecionar uma imagem recente disponível → **Finish**
 4. Iniciar o dispositivo e confirmar funcionamento
 
 ## ✅ Checklist Final de Verificação
@@ -135,7 +133,7 @@ Execute cada comando e confirme que retorna versão:
 node -v          → versão aparece
 npm -v           → versão aparece
 git --version    → versão aparece
-expo --version   → versão aparece
+npx expo --version → versão aparece
 java -version    → versão aparece
 
 # ✅ Verificações de PATH - PowerShell
@@ -157,7 +155,7 @@ Get-Command git
 **Solução**: Configurar variáveis de ambiente manualmente conforme orientação do anexo 1
 
 ### Problema: Emulador não inicia
-**Solução**: Verificar se Intel HAXM está instalado e habilitado na BIOS
+**Solução**: Habilitar a virtualização na BIOS e o Windows Hypervisor Platform. O Intel HAXM está descontinuado.
 
 ### Problema: Expo não funciona
 **Solução**: Verificar se firewall não está bloqueando a porta 19000
@@ -185,7 +183,7 @@ Get-Command git
    - **Adicionar** os seguintes caminhos:
      ```
      C:\Program Files\nodejs\
-     C:\Program Files\Java\jdk-23\bin\
+     C:\Program Files\Java\jdk-17\bin\
      C:\Program Files\Git\bin\
      C:\Users\[USERNAME]\AppData\Local\Android\Sdk\platform-tools\
      ```
@@ -193,7 +191,7 @@ Get-Command git
 3. **Configurar JAVA_HOME**:
    - Em **Variáveis do Sistema**, clicar **Novo**
    - **Nome da variável**: `JAVA_HOME`
-   - **Valor da variável**: `C:\Program Files\Java\jdk-23`
+   - **Valor da variável**: `C:\Program Files\Java\jdk-17`
 
 4. **Configurar ANDROID_HOME**:
    - Em **Variáveis do Sistema**, clicar **Novo**
@@ -206,4 +204,3 @@ Get-Command git
 
 ---
 *Roteiro atualizado para configuração de laboratório - React Native*
-

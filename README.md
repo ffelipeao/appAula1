@@ -27,9 +27,9 @@ Este é um aplicativo móvel desenvolvido em **React Native** como parte de um p
 
 Para executar este projeto, você precisará ter instalado:
 
-- **Node.js** (versão 14 ou superior)
-- **npm** ou **yarn**
-- **Expo CLI**
+- **Node.js LTS** (versão 22.11 ou superior; não use versões ímpares)
+- **npm** (incluído com o Node.js)
+- **Expo CLI local** (executada com `npx expo`, sem instalação global)
 - **Android Studio** (para desenvolvimento Android)
 - **Xcode** (para desenvolvimento iOS - apenas macOS)
 
