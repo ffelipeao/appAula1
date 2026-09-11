@@ -354,64 +354,53 @@ O operador `condição ? valorA : valorB` é chamado de operador ternário.
 
 Toque até chegar a oito copos. Observe que o texto e a cor mudam sem recarregar o aplicativo.
 
-## 9. Etapa 7 — Preparando duas páginas
+## 9. Etapa 7 — Organizando os arquivos das páginas
 
-Antes de criar o menu, separe a interface em duas funções. Cada função será uma página:
+Até agora, toda a interface está em `App.js`. A partir desta etapa, cada página será criada em um arquivo separado dentro da pasta `src/screens`.
 
-```jsx
-function InicioScreen() {
-  return (
-    <View>
-      <Text>Página inicial</Text>
-    </View>
-  );
-}
+Adotaremos este padrão:
 
-function SobreScreen() {
-  return (
-    <View>
-      <Text>Sobre o aplicativo</Text>
-    </View>
-  );
-}
+- nomes de componentes começam com letra maiúscula;
+- arquivos de páginas terminam com `Screen.js`;
+- o nome do arquivo é igual ao nome do componente;
+- todas as páginas ficam dentro de `src/screens`;
+- `App.js` fica responsável somente pela configuração geral e pela navegação.
+
+Ao terminar as próximas etapas, a estrutura será:
+
+```text
+MeuAppDeHabitos/
+├── App.js
+└── src/
+    └── screens/
+        ├── InicioScreen.js
+        └── SobreScreen.js
 ```
 
-Usamos o sufixo `Screen`, que significa “tela”, apenas como convenção para reconhecer os componentes que serão páginas.
+No explorador de arquivos do VS Code:
 
-Na próxima etapa, `InicioScreen` receberá o contador construído anteriormente e `SobreScreen` terá as informações do projeto.
+1. crie a pasta `src` na raiz do projeto;
+2. dentro de `src`, crie a pasta `screens`;
+3. não apague `App.js`.
 
-## 10. Etapa 8 — Instalando o navegador
+> O caminho `src/screens` ajuda a separar as páginas dos arquivos de configuração. Em projetos maiores, outras pastas poderão ser acrescentadas dentro de `src`.
 
-Interrompa o Expo com `Ctrl+C`. No terminal, dentro da pasta `MeuAppDeHabitos`, instale a biblioteca principal, as dependências compatíveis com o Expo e o navegador de abas:
+## 10. Etapa 8 — Criando a página inicial em arquivo separado
 
-```bash
-npm install @react-navigation/native @react-navigation/bottom-tabs
-npx expo install react-native-screens react-native-safe-area-context
+Crie o primeiro arquivo de página:
+
+```text
+src/screens/InicioScreen.js
 ```
 
-Depois, inicie novamente:
-
-```bash
-npx expo start
-```
-
-O `NavigationContainer` controlará a navegação. O `createBottomTabNavigator` criará o menu inferior.
-
-## 11. Etapa 9 — Aplicativo completo com menu de navegação
-
-Substitua todo o conteúdo de `App.js` pelo código final:
+Mova para esse arquivo a interface do contador construída nas etapas anteriores. Digite o seguinte conteúdo em **`src/screens/InicioScreen.js`**:
 
 ```jsx
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-// Cria o navegador que exibirá as opções no menu inferior.
-const Tab = createBottomTabNavigator();
-
-function InicioScreen() {
+// Esta função representa somente a página inicial.
+export default function InicioScreen() {
   const [copos, setCopos] = useState(0);
   const metaAtingida = copos >= 8;
   const mensagem = metaAtingida
@@ -456,57 +445,7 @@ function InicioScreen() {
   );
 }
 
-function SobreScreen() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.cartao}>
-        <Text style={styles.tituloSobre}>Sobre o aplicativo</Text>
-        <Text style={styles.paragrafo}>
-          Este projeto foi criado para praticar componentes, estilos, estado e
-          navegação com React Native e Expo.
-        </Text>
-        <Text style={styles.paragrafo}>
-          A meta sugerida no exemplo é registrar oito copos de água por dia.
-        </Text>
-      </View>
-    </View>
-  );
-}
-
-export default function App() {
-  return (
-    <>
-      <StatusBar style="dark" />
-
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={{
-            headerStyle: styles.cabecalho,
-            headerTintColor: '#0C4A6E',
-            tabBarActiveTintColor: '#0284C7',
-            tabBarInactiveTintColor: '#64748B',
-            tabBarLabelStyle: styles.rotuloMenu,
-          }}
-        >
-          <Tab.Screen
-            name="Inicio"
-            component={InicioScreen}
-            options={{
-              title: 'Meu hábito',
-              tabBarLabel: 'Início',
-            }}
-          />
-          <Tab.Screen
-            name="Sobre"
-            component={SobreScreen}
-            options={{ tabBarLabel: 'Sobre' }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </>
-  );
-}
-
+// Estes estilos pertencem somente à página InicioScreen.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -587,7 +526,67 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  tituloSobre: {
+});
+```
+
+Observe o `export default` antes da função. Ele permite que `InicioScreen` seja importado por outro arquivo.
+
+Neste momento, a página já existe, mas ainda não está ligada ao `App.js`. Essa ligação será feita depois que as duas páginas estiverem prontas.
+
+## 11. Etapa 9 — Criando a segunda página em arquivo separado
+
+Agora crie o arquivo:
+
+```text
+src/screens/SobreScreen.js
+```
+
+Digite o seguinte conteúdo em **`src/screens/SobreScreen.js`**:
+
+```jsx
+import { StyleSheet, Text, View } from 'react-native';
+
+// Esta função representa somente a página Sobre.
+export default function SobreScreen() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.cartao}>
+        <Text style={styles.titulo}>Sobre o aplicativo</Text>
+        <Text style={styles.paragrafo}>
+          Este projeto foi criado para praticar componentes, estilos, estado e
+          navegação com React Native e Expo.
+        </Text>
+        <Text style={styles.paragrafo}>
+          A meta sugerida no exemplo é registrar oito copos de água por dia.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+// Estes estilos pertencem somente à página SobreScreen.
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#E0F2FE',
+    padding: 24,
+  },
+  cartao: {
+    width: '100%',
+    maxWidth: 520,
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    elevation: 3,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+  },
+  titulo: {
     color: '#0C4A6E',
     fontSize: 26,
     fontWeight: 'bold',
@@ -601,6 +600,91 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'center',
   },
+});
+```
+
+Agora existem duas páginas independentes:
+
+| Arquivo | Componente exportado | Responsabilidade |
+|---|---|---|
+| `src/screens/InicioScreen.js` | `InicioScreen` | Exibir e atualizar o contador de copos. |
+| `src/screens/SobreScreen.js` | `SobreScreen` | Apresentar informações sobre o projeto. |
+
+## 12. Etapa 10 — Instalando o navegador
+
+Interrompa o Expo com `Ctrl+C`. No terminal, dentro da pasta `MeuAppDeHabitos`, instale a biblioteca principal, as dependências compatíveis com o Expo e o navegador de abas:
+
+```bash
+npm install @react-navigation/native @react-navigation/bottom-tabs
+npx expo install react-native-screens react-native-safe-area-context
+```
+
+Depois, inicie novamente:
+
+```bash
+npx expo start
+```
+
+O `NavigationContainer` controlará a navegação. O `createBottomTabNavigator` criará o menu inferior.
+
+## 13. Etapa 11 — Ligando as páginas ao menu de navegação
+
+Agora altere somente o arquivo da raiz:
+
+```text
+App.js
+```
+
+Substitua todo o conteúdo de **`App.js`** pelo código abaixo. As páginas não serão declaradas novamente nesse arquivo; elas serão importadas de `src/screens`:
+
+```jsx
+import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Importa cada página de seu próprio arquivo.
+import InicioScreen from './src/screens/InicioScreen';
+import SobreScreen from './src/screens/SobreScreen';
+
+// Cria o navegador que exibirá as opções no menu inferior.
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <>
+      <StatusBar style="dark" />
+
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerStyle: styles.cabecalho,
+            headerTintColor: '#0C4A6E',
+            tabBarActiveTintColor: '#0284C7',
+            tabBarInactiveTintColor: '#64748B',
+            tabBarLabelStyle: styles.rotuloMenu,
+          }}
+        >
+          <Tab.Screen
+            name="Inicio"
+            component={InicioScreen}
+            options={{
+              title: 'Meu hábito',
+              tabBarLabel: 'Início',
+            }}
+          />
+          <Tab.Screen
+            name="Sobre"
+            component={SobreScreen}
+            options={{ tabBarLabel: 'Sobre' }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
   cabecalho: {
     backgroundColor: '#F0F9FF',
   },
@@ -611,6 +695,17 @@ const styles = StyleSheet.create({
 });
 ```
 
+Revise a estrutura final antes de testar:
+
+```text
+MeuAppDeHabitos/
+├── App.js                         # Configura o navegador e registra as páginas
+└── src/
+    └── screens/
+        ├── InicioScreen.js        # Página com o contador e o useState
+        └── SobreScreen.js         # Página com informações do aplicativo
+```
+
 ### Entendendo a navegação
 
 - `NavigationContainer` envolve e gerencia toda a navegação;
@@ -618,7 +713,8 @@ const styles = StyleSheet.create({
 - cada `Tab.Screen` registra uma opção do menu;
 - `name` identifica a rota;
 - `component` informa qual componente será exibido;
-- `options` personaliza o título e o texto da aba.
+- `options` personaliza o título e o texto da aba;
+- os comandos `import` de `App.js` carregam as páginas de seus respectivos arquivos.
 
 Neste exemplo, o menu apresenta **Início** e **Sobre**. Ao trocar de aba, o navegador escolhe qual componente de página deve aparecer.
 
@@ -626,7 +722,7 @@ O botão principal também possui um estilo dinâmico: `Pressable` fornece o val
 
 Usamos `setCopos((valorAtual) => valorAtual + 1)` no código final. Essa forma calcula o próximo valor a partir do estado mais recente e é recomendada quando a atualização depende do valor anterior.
 
-## 12. Teste final
+## 14. Teste final
 
 1. Confirme que o menu apresenta as opções **Início** e **Sobre**.
 2. Na página **Início**, adicione alguns copos.
@@ -635,7 +731,7 @@ Usamos `setCopos((valorAtual) => valorAtual + 1)` no código final. Essa forma c
 5. Alcance oito copos e observe a mudança da mensagem e da cor.
 6. Pressione **Reiniciar** e confirme que o estado volta a zero.
 
-## 13. Desafios graduais
+## 15. Desafios graduais
 
 Faça um desafio por vez:
 
@@ -645,15 +741,16 @@ Faça um desafio por vez:
 4. Impeça que o contador ultrapasse a meta.
 5. Adicione um botão para diminuir o valor sem permitir números negativos.
 6. Personalize as cores do cabeçalho e do menu.
-7. Crie uma terceira página chamada **Dicas** e registre-a em outro `Tab.Screen`.
+7. Crie `src/screens/DicasScreen.js`, exporte o componente `DicasScreen`, importe-o em `App.js` e registre-o em outro `Tab.Screen`.
 
-## 14. Problemas comuns
+## 16. Problemas comuns
 
 | Problema | Possível solução |
 |---|---|
 | `useState is not defined` | Confira se existe `import { useState } from 'react';`. |
 | `setCopos is not a function` | Confira a ordem: `const [copos, setCopos] = useState(0);`. |
 | O estilo não aparece | Verifique `style={styles.nomeDoEstilo}` e o mesmo nome no `StyleSheet`. |
+| Uma página não é encontrada | Confira o nome do arquivo, o `export default` e o caminho usado no `import` de `App.js`. |
 | `Unable to resolve @react-navigation...` | Interrompa o Expo, execute os comandos de instalação e inicie novamente. |
 | O menu não aparece | Confira se `Tab.Navigator` contém os dois componentes `Tab.Screen`. |
 | O aplicativo exibe uma tela vermelha | Leia a primeira mensagem do erro e confira chaves, parênteses, vírgulas e importações. |
@@ -668,7 +765,9 @@ Faça um desafio por vez:
 - [ ] Criei um valor dinâmico com `useState`.
 - [ ] Atualizei o estado a partir do evento `onPress`.
 - [ ] Alterei texto e estilo de acordo com uma condição.
-- [ ] Separei a interface em dois componentes de página.
+- [ ] Criei a pasta padronizada `src/screens`.
+- [ ] Criei `InicioScreen.js` e `SobreScreen.js` como arquivos separados.
+- [ ] Exportei cada página e importei ambas em `App.js`.
 - [ ] Instalei e configurei o React Navigation.
 - [ ] Naveguei entre duas páginas usando o menu inferior.
 
