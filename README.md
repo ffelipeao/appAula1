@@ -106,6 +106,8 @@ Para personalizar o app, você pode:
 
 ## 📚 Recursos para Aprendizado
 
+- [Tutorial prático: primeiro projeto, componentes, estilos e conteúdo dinâmico](tutorial_primeiro_projeto_expo.md)
+- [Tutorial incremental: estado, estilos dinâmicos e navegação entre páginas](tutorial_projeto_expo_incremental_com_navegacao.md)
 - [Documentação oficial do React Native](https://reactnative.dev/)
 - [Documentação do Expo](https://docs.expo.dev/)
 - [Guia de estilos React Native](https://reactnative.dev/docs/style)
