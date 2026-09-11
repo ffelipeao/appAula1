@@ -33,15 +33,47 @@ node -v
 npm -v
 ```
 
-Crie um projeto Expo básico em JavaScript:
+Crie um projeto Expo básico em JavaScript e entre na pasta criada:
 
 ```bash
-npx create-expo-app --template blank
+npx create-expo-app MeuAppDeHabitos --template blank
 cd MeuAppDeHabitos
+```
+
+Instale ou confira as dependências básicas do projeto:
+
+```bash
+npm install
+```
+
+Instale também as bibliotecas necessárias para executar e testar o aplicativo no navegador:
+
+```bash
+npx expo install react-dom react-native-web @expo/metro-runtime
+```
+
+- `react-dom` renderiza a aplicação no navegador;
+- `react-native-web` adapta os componentes do React Native para a web;
+- `@expo/metro-runtime` fornece o suporte do Metro para a execução web.
+
+Agora instale as bibliotecas que serão usadas no menu de navegação das etapas finais:
+
+```bash
+npm install @react-navigation/native @react-navigation/bottom-tabs
+npx expo install react-native-screens react-native-safe-area-context
+```
+
+O comando `expo install` escolhe versões compatíveis com a versão do Expo utilizada pelo projeto.
+
+Por fim, abra a pasta no VS Code:
+
+```bash
 code .
 ```
 
 O parâmetro `--template blank` cria um projeto pequeno, apropriado para acompanhar a inclusão de cada recurso.
+
+> O `create-expo-app` normalmente já executa a instalação inicial. Mesmo assim, `npm install` é útil para garantir que todas as dependências registradas em `package.json` estejam disponíveis, principalmente quando o projeto foi copiado ou baixado da internet.
 
 Se `code .` não funcionar, abra o VS Code e use **Arquivo > Abrir Pasta**.
 
@@ -53,12 +85,20 @@ No terminal, dentro da pasta do projeto, execute:
 npx expo start
 ```
 
-Depois, você pode:
+Espere o terminal mostrar o QR Code e os atalhos do Expo. Depois, você pode:
 
 - ler o QR Code com o Expo Go;
 - pressionar `a` para abrir um emulador Android;
 - pressionar `i` para abrir o simulador iOS no macOS;
-- pressionar `w` para abrir no navegador.
+- **pressionar a tecla `w` para abrir e testar o projeto no navegador**.
+
+Para testar pela web, não encerre o comando `npx expo start`. Com o terminal do Expo selecionado, pressione apenas:
+
+```text
+w
+```
+
+O Expo compilará a versão web e abrirá o endereço local do projeto no navegador. Sempre que você salvar `App.js` ou um arquivo dentro de `src`, a página deverá ser atualizada automaticamente.
 
 Mantenha o terminal aberto. Para interromper o servidor, pressione `Ctrl+C`.
 
@@ -772,9 +812,15 @@ Use um endereço que comece com `https://` e termine diretamente em uma imagem, 
 
 Altere `width` e `height` para `80` e depois para `160`. Mantenha os dois valores iguais para evitar que uma logomarca quadrada fique distorcida.
 
-## 13. Etapa 11 — Instalando o navegador
+## 13. Etapa 11 — Conferindo a instalação do navegador
 
-Interrompa o Expo com `Ctrl+C`. No terminal, dentro da pasta `MeuAppDeHabitos`, instale a biblioteca principal, as dependências compatíveis com o Expo e o navegador de abas:
+As bibliotecas de navegação já foram instaladas no início do tutorial. Antes de continuar, interrompa o Expo com `Ctrl+C` e confira a instalação:
+
+```bash
+npm list @react-navigation/native @react-navigation/bottom-tabs
+```
+
+Se algum pacote aparecer como ausente ou se você não executou a instalação inicial, use:
 
 ```bash
 npm install @react-navigation/native @react-navigation/bottom-tabs
@@ -786,6 +832,8 @@ Depois, inicie novamente:
 ```bash
 npx expo start
 ```
+
+Para continuar testando no navegador, aguarde o Expo iniciar e pressione `w` novamente.
 
 O `NavigationContainer` controlará a navegação. O `createBottomTabNavigator` criará o menu inferior.
 
@@ -918,12 +966,17 @@ Faça um desafio por vez:
 | A imagem remota não aparece | Confira a internet, use um endereço `https://` direto e mantenha `width` e `height` no estilo. |
 | `Unable to resolve @react-navigation...` | Interrompa o Expo, execute os comandos de instalação e inicie novamente. |
 | O menu não aparece | Confira se `Tab.Navigator` contém os dois componentes `Tab.Screen`. |
+| O Expo solicita dependências para web | Execute `npx expo install react-dom react-native-web @expo/metro-runtime` e inicie novamente. |
 | O aplicativo exibe uma tela vermelha | Leia a primeira mensagem do erro e confira chaves, parênteses, vírgulas e importações. |
+| Pressionar `w` não abre o navegador | Clique no terminal em que `npx expo start` está rodando e pressione `w` novamente. |
 | Uma alteração antiga continua aparecendo | Execute `npx expo start --clear`. |
 
 ## Checklist de aprendizagem
 
 - [ ] Criei e executei um projeto com o template `blank`.
+- [ ] Instalei as dependências usando os comandos apresentados no início.
+- [ ] Instalei `react-dom`, `react-native-web` e `@expo/metro-runtime`.
+- [ ] Pressionei `w` no terminal do Expo e testei o aplicativo no navegador.
 - [ ] Exibi elementos com `Text` e os agrupei com `View`.
 - [ ] Apliquei estilos por meio da propriedade `style`.
 - [ ] Organizei estilos reutilizáveis com `StyleSheet.create`.
