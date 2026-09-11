@@ -610,7 +610,169 @@ Agora existem duas páginas independentes:
 | `src/screens/InicioScreen.js` | `InicioScreen` | Exibir e atualizar o contador de copos. |
 | `src/screens/SobreScreen.js` | `SobreScreen` | Apresentar informações sobre o projeto. |
 
-## 12. Etapa 10 — Instalando o navegador
+## 12. Etapa 10 — Incluindo uma logomarca na página Sobre
+
+Vamos acrescentar uma imagem à página **Sobre** para simular a logomarca do aplicativo. Você pode salvar a imagem dentro do projeto ou carregá-la diretamente de um endereço da internet.
+
+### Opção A — Baixar e usar uma imagem local
+
+Esta é a opção recomendada, pois a imagem continuará aparecendo mesmo quando o celular estiver sem internet.
+
+O template do Expo normalmente já possui a pasta `assets`. Se ela não existir, crie-a na raiz do projeto:
+
+```text
+MeuAppDeHabitos/
+├── App.js
+├── assets/
+│   └── logo.png
+└── src/
+    └── screens/
+        ├── InicioScreen.js
+        └── SobreScreen.js
+```
+
+Para obter uma imagem:
+
+1. procure na internet uma imagem que represente o aplicativo, por exemplo, uma gota de água;
+2. escolha uma imagem que você tenha permissão para utilizar;
+3. baixe preferencialmente um arquivo PNG ou JPG;
+4. renomeie o arquivo para `logo.png`;
+5. mova o arquivo para a pasta `assets` do projeto.
+
+Para praticar sem procurar uma imagem, você também pode baixar a pequena imagem de exemplo da documentação do React Native. Execute o comando na raiz do projeto:
+
+```bash
+curl -L https://reactnative.dev/img/tiny_logo.png -o assets/logo.png
+```
+
+Depois, substitua todo o conteúdo de **`src/screens/SobreScreen.js`** por:
+
+```jsx
+import { Image, StyleSheet, Text, View } from 'react-native';
+
+export default function SobreScreen() {
+  return (
+    <View style={styles.container}>
+      <View style={styles.cartao}>
+        {/* ../../ volta de src/screens até a raiz do projeto. */}
+        <Image
+          source={require('../../assets/logo.png')}
+          style={styles.logo}
+        />
+
+        <Text style={styles.titulo}>Sobre o aplicativo</Text>
+        <Text style={styles.paragrafo}>
+          Este projeto foi criado para praticar componentes, estilos, estado e
+          navegação com React Native e Expo.
+        </Text>
+        <Text style={styles.paragrafo}>
+          A meta sugerida no exemplo é registrar oito copos de água por dia.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#E0F2FE',
+    padding: 24,
+  },
+  cartao: {
+    width: '100%',
+    maxWidth: 520,
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    elevation: 3,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+    marginBottom: 18,
+  },
+  titulo: {
+    color: '#0C4A6E',
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  paragrafo: {
+    color: '#334155',
+    fontSize: 17,
+    lineHeight: 25,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+});
+```
+
+O caminho usado em `require` parte do arquivo `SobreScreen.js`:
+
+```text
+src/screens/SobreScreen.js → ../../ → raiz → assets/logo.png
+```
+
+Se você mudar o nome ou o local da imagem, deverá atualizar esse caminho no código.
+
+### Opção B — Usar uma imagem diretamente da internet
+
+Nesta opção, nenhum arquivo de imagem precisa ser salvo no projeto. O aplicativo precisará de internet para carregar a logomarca.
+
+Em **`src/screens/SobreScreen.js`**, mantenha a importação de `Image`:
+
+```jsx
+import { Image, StyleSheet, Text, View } from 'react-native';
+```
+
+Troque o componente `Image` da opção anterior por:
+
+```jsx
+<Image
+  source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+  style={styles.logo}
+/>
+```
+
+Mantenha também o estilo com largura e altura definidas:
+
+```jsx
+logo: {
+  width: 120,
+  height: 120,
+  resizeMode: 'contain',
+  marginBottom: 18,
+},
+```
+
+Para usar outra imagem, substitua somente o endereço entre aspas:
+
+```jsx
+<Image
+  source={{ uri: 'https://endereco-do-site.com/minha-logo.png' }}
+  style={styles.logo}
+/>
+```
+
+Use um endereço que comece com `https://` e termine diretamente em uma imagem, como `.png`, `.jpg` ou `.jpeg`. O endereço de uma página de pesquisa não funciona como fonte da imagem.
+
+> Imagens remotas precisam ter `width` e `height` definidas no estilo. Caso o endereço deixe de funcionar ou o aparelho fique sem internet, a imagem não será exibida.
+
+### Experimente
+
+Altere `width` e `height` para `80` e depois para `160`. Mantenha os dois valores iguais para evitar que uma logomarca quadrada fique distorcida.
+
+## 13. Etapa 11 — Instalando o navegador
 
 Interrompa o Expo com `Ctrl+C`. No terminal, dentro da pasta `MeuAppDeHabitos`, instale a biblioteca principal, as dependências compatíveis com o Expo e o navegador de abas:
 
@@ -627,7 +789,7 @@ npx expo start
 
 O `NavigationContainer` controlará a navegação. O `createBottomTabNavigator` criará o menu inferior.
 
-## 13. Etapa 11 — Ligando as páginas ao menu de navegação
+## 14. Etapa 12 — Ligando as páginas ao menu de navegação
 
 Agora altere somente o arquivo da raiz:
 
@@ -722,7 +884,7 @@ O botão principal também possui um estilo dinâmico: `Pressable` fornece o val
 
 Usamos `setCopos((valorAtual) => valorAtual + 1)` no código final. Essa forma calcula o próximo valor a partir do estado mais recente e é recomendada quando a atualização depende do valor anterior.
 
-## 14. Teste final
+## 15. Teste final
 
 1. Confirme que o menu apresenta as opções **Início** e **Sobre**.
 2. Na página **Início**, adicione alguns copos.
@@ -730,8 +892,9 @@ Usamos `setCopos((valorAtual) => valorAtual + 1)` no código final. Essa forma c
 4. Confira se o contador conserva o valor ao alternar as abas.
 5. Alcance oito copos e observe a mudança da mensagem e da cor.
 6. Pressione **Reiniciar** e confirme que o estado volta a zero.
+7. Abra **Sobre** e confirme que a logomarca aparece acima do título.
 
-## 15. Desafios graduais
+## 16. Desafios graduais
 
 Faça um desafio por vez:
 
@@ -743,7 +906,7 @@ Faça um desafio por vez:
 6. Personalize as cores do cabeçalho e do menu.
 7. Crie `src/screens/DicasScreen.js`, exporte o componente `DicasScreen`, importe-o em `App.js` e registre-o em outro `Tab.Screen`.
 
-## 16. Problemas comuns
+## 17. Problemas comuns
 
 | Problema | Possível solução |
 |---|---|
@@ -751,6 +914,8 @@ Faça um desafio por vez:
 | `setCopos is not a function` | Confira a ordem: `const [copos, setCopos] = useState(0);`. |
 | O estilo não aparece | Verifique `style={styles.nomeDoEstilo}` e o mesmo nome no `StyleSheet`. |
 | Uma página não é encontrada | Confira o nome do arquivo, o `export default` e o caminho usado no `import` de `App.js`. |
+| A imagem local não aparece | Confira se o arquivo está em `assets/logo.png` e se o caminho usado é `../../assets/logo.png`. |
+| A imagem remota não aparece | Confira a internet, use um endereço `https://` direto e mantenha `width` e `height` no estilo. |
 | `Unable to resolve @react-navigation...` | Interrompa o Expo, execute os comandos de instalação e inicie novamente. |
 | O menu não aparece | Confira se `Tab.Navigator` contém os dois componentes `Tab.Screen`. |
 | O aplicativo exibe uma tela vermelha | Leia a primeira mensagem do erro e confira chaves, parênteses, vírgulas e importações. |
@@ -768,6 +933,7 @@ Faça um desafio por vez:
 - [ ] Criei a pasta padronizada `src/screens`.
 - [ ] Criei `InicioScreen.js` e `SobreScreen.js` como arquivos separados.
 - [ ] Exportei cada página e importei ambas em `App.js`.
+- [ ] Exibi uma logomarca local ou remota na página `SobreScreen`.
 - [ ] Instalei e configurei o React Navigation.
 - [ ] Naveguei entre duas páginas usando o menu inferior.
 
@@ -776,5 +942,6 @@ Faça um desafio por vez:
 - [Criar um projeto Expo](https://docs.expo.dev/get-started/create-a-project/)
 - [Estado de um componente com `useState`](https://react.dev/reference/react/useState)
 - [Estilos no React Native](https://reactnative.dev/docs/style)
+- [Imagens locais e remotas no React Native](https://reactnative.dev/docs/images)
 - [Primeiros passos com React Navigation](https://reactnavigation.org/docs/getting-started/)
 - [Navegador de abas inferiores](https://reactnavigation.org/docs/bottom-tab-navigator/)
