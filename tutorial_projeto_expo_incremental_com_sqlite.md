@@ -1,169 +1,173 @@
-# Tutorial — Projeto Expo incremental com SQLite para cadastrar e consultar produtos
+# Tutorial — Projeto Expo com navegação e SQLite para gerenciar produtos
 
-Neste tutorial, você vai construir um aplicativo de produtos com **React Native, Expo e SQLite**. O projeto começa com uma tela simples e cresce aos poucos. Em cada etapa, adicionaremos somente alguns conceitos novos.
+Neste tutorial, você construirá um aplicativo com **React Native, Expo e SQLite**. O projeto será organizado em arquivos separados desde o início para que cada parte tenha uma responsabilidade clara.
 
-Ao final, o aplicativo permitirá:
+Ao final, o aplicativo terá:
 
-- digitar o nome, o preço e a quantidade de um produto;
-- salvar produtos em um banco de dados SQLite;
-- manter os dados mesmo depois de fechar e abrir o aplicativo;
-- consultar todos os produtos cadastrados;
-- pesquisar produtos pelo nome;
-- excluir um produto da lista.
+- uma tela inicial com informações básicas;
+- botões para abrir o cadastro e a consulta de produtos;
+- um banco SQLite armazenado no dispositivo;
+- cadastro de nome, preço e quantidade;
+- listagem e pesquisa de produtos;
+- alteração de produtos já cadastrados;
+- exclusão com confirmação;
+- navegação entre as telas.
 
-O SQLite é um banco de dados armazenado no próprio dispositivo. Portanto, este projeto não precisa de servidor nem de conexão com a internet para cadastrar e consultar os produtos.
+O aplicativo implementará as quatro operações CRUD:
 
-> O banco criado neste tutorial é local. Os produtos cadastrados em um aparelho não aparecem automaticamente em outro aparelho.
+| Operação | SQL | Recurso do aplicativo |
+|---|---|---|
+| Create | `INSERT` | Cadastrar produto |
+| Read | `SELECT` | Consultar produtos |
+| Update | `UPDATE` | Alterar produto |
+| Delete | `DELETE` | Excluir produto |
+
+> O SQLite é local. Os dados permanecem no aparelho, mas não são sincronizados automaticamente entre dispositivos.
 
 ## Como estudar com este tutorial
 
 Em cada etapa:
 
-1. substitua o conteúdo do arquivo `App.js` pelo código apresentado;
-2. salve o arquivo;
-3. observe a atualização automática;
-4. faça o pequeno experimento sugerido;
-5. avance somente depois de entender a mudança.
-
-Não é necessário memorizar o código. O objetivo é relacionar cada trecho ao resultado mostrado na tela e compreender o caminho percorrido pelos dados.
+1. crie ou altere apenas os arquivos indicados;
+2. salve os arquivos;
+3. teste a mudança no Expo Go ou em um emulador;
+4. confira se não há mensagens de erro no terminal;
+5. avance somente depois de compreender a etapa.
 
 ## 1. Criando o projeto
 
-Confirme que o Node.js e o npm estão instalados:
+Confirme que Node.js e npm estão instalados:
 
 ```bash
 node -v
 npm -v
 ```
 
-Crie um projeto Expo básico em JavaScript e entre na pasta criada:
+Crie um projeto Expo básico em JavaScript:
 
 ```bash
 npx create-expo-app MeuCadastroDeProdutos --template blank
 cd MeuCadastroDeProdutos
 ```
 
-Instale a biblioteca do SQLite usando o comando do Expo:
+Instale o SQLite e as bibliotecas de navegação:
 
 ```bash
 npx expo install expo-sqlite
+npm install @react-navigation/native @react-navigation/native-stack
+npx expo install react-native-screens react-native-safe-area-context
 ```
 
-O comando `expo install` escolhe uma versão compatível com a versão do Expo utilizada pelo projeto.
+O comando `expo install` escolhe versões compatíveis com o SDK do projeto.
 
-Por fim, abra a pasta no VS Code:
+Abra a pasta no VS Code:
 
 ```bash
 code .
 ```
 
-Se `code .` não funcionar, abra o VS Code e use **Arquivo > Abrir Pasta**.
-
 ## 2. Executando o aplicativo
 
-Dentro da pasta do projeto, execute:
+Execute:
 
 ```bash
 npx expo start
 ```
 
-Espere o terminal mostrar o QR Code e os atalhos do Expo. Depois, você pode:
+Se o celular não conseguir acessar o projeto pela rede local, inicie o Expo no modo túnel:
 
-- ler o QR Code com o Expo Go;
-- pressionar `a` para abrir um emulador Android;
-- pressionar `i` para abrir o simulador iOS no macOS.
-
-Para este tutorial, dê preferência ao **Expo Go, emulador Android ou simulador iOS**. O SQLite faz parte do Expo Go e os dados permanecem armazenados no aplicativo entre as execuções.
-
-> O `expo-sqlite` também possui suporte para web, mas essa configuração exige suporte a arquivos WebAssembly e cabeçalhos específicos. Há uma seção opcional sobre isso no fim do tutorial.
-
-Mantenha o terminal aberto. Para interromper o servidor, pressione `Ctrl+C`.
-
-## 3. Etapa 1 — Criando a primeira tela
-
-Abra `App.js`, apague o conteúdo e escreva:
-
-```jsx
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
-      <Text style={styles.subtitulo}>
-        Registre e consulte os produtos do estoque.
-      </Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#F1F5F9',
-    padding: 24,
-  },
-  titulo: {
-    color: '#0F172A',
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  subtitulo: {
-    color: '#475569',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 8,
-  },
-});
+```bash
+npx expo start --tunnel
 ```
 
-`App` é um componente: uma função que retorna a interface. A `View` agrupa os elementos, e cada `Text` exibe um texto.
+O túnel cria um endereço acessível pela internet. Depois que o novo QR Code aparecer no terminal, leia-o com o Expo Go. Mantenha o terminal aberto e deixe o computador e o celular conectados à internet durante o teste.
 
-### Experimente
+> Na primeira execução, o Expo pode solicitar a instalação do pacote necessário para criar o túnel. Confirme a instalação e aguarde a geração do novo QR Code. O modo túnel costuma ser mais lento que a conexão pela rede local, mas ajuda quando os dispositivos estão em redes diferentes ou quando o roteador bloqueia a comunicação direta.
 
-Troque o título e altere a cor de fundo definida em `backgroundColor`.
+Depois, você pode:
 
-## 4. Etapa 2 — Montando o formulário
+- ler o QR Code com o Expo Go;
+- pressionar `a` para abrir o emulador Android;
+- pressionar `i` para abrir o simulador iOS no macOS.
 
-Agora adicione três campos de texto e um botão. Ainda não salvaremos informações no banco.
+Para este tutorial, dê preferência ao Expo Go ou a um emulador. O suporte web do `expo-sqlite` exige configuração adicional de WebAssembly e cabeçalhos específicos.
 
-Substitua `App.js` por:
+## 3. Planejando a organização dos arquivos
+
+Ao final do tutorial, o projeto terá esta estrutura:
+
+```text
+MeuCadastroDeProdutos/
+├── App.js
+└── src/
+    ├── database/
+    │   └── database.js
+    └── screens/
+        ├── HomeScreen.js
+        ├── ProductFormScreen.js
+        └── ProductsListScreen.js
+```
+
+Cada arquivo terá uma responsabilidade:
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `App.js` | Abrir o banco e configurar a navegação |
+| `database.js` | Criar a tabela de produtos |
+| `HomeScreen.js` | Exibir informações e os acessos principais |
+| `ProductFormScreen.js` | Cadastrar ou alterar um produto |
+| `ProductsListScreen.js` | Consultar, pesquisar, alterar e excluir |
+
+Crie as pastas pelo explorador do VS Code ou pelo terminal:
+
+```bash
+mkdir -p src/database src/screens
+```
+
+## 4. Etapa 1 — Criando a tela inicial
+
+Crie o arquivo:
+
+```text
+src/screens/HomeScreen.js
+```
+
+Adicione:
 
 ```jsx
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
-
-      <View style={styles.formulario}>
-        <Text style={styles.rotulo}>Nome</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: Caderno"
-        />
-
-        <Text style={styles.rotulo}>Preço</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 19,90"
-          keyboardType="decimal-pad"
-        />
-
-        <Text style={styles.rotulo}>Quantidade</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 10"
-          keyboardType="number-pad"
-        />
-
-        <Pressable style={styles.botao}>
-          <Text style={styles.textoBotao}>Cadastrar produto</Text>
-        </Pressable>
+      <View style={styles.apresentacao}>
+        <Text style={styles.icone}>📦</Text>
+        <Text style={styles.titulo}>Controle de produtos</Text>
+        <Text style={styles.descricao}>
+          Cadastre produtos e acompanhe preços e quantidades do seu estoque.
+        </Text>
       </View>
+
+      <View style={styles.resumo}>
+        <Text style={styles.tituloResumo}>O que você pode fazer</Text>
+        <Text style={styles.itemResumo}>• Cadastrar novos produtos</Text>
+        <Text style={styles.itemResumo}>• Consultar e pesquisar o estoque</Text>
+        <Text style={styles.itemResumo}>• Alterar ou excluir registros</Text>
+      </View>
+
+      <Pressable
+        style={styles.botaoPrincipal}
+        onPress={() => navigation.navigate('CadastroProduto')}
+      >
+        <Text style={styles.textoBotaoPrincipal}>Cadastrar produto</Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.botaoSecundario}
+        onPress={() => navigation.navigate('ConsultaProdutos')}
+      >
+        <Text style={styles.textoBotaoSecundario}>Consultar produtos</Text>
+      </Pressable>
     </View>
   );
 }
@@ -175,258 +179,233 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
     padding: 24,
   },
+  apresentacao: {
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  icone: {
+    fontSize: 54,
+    marginBottom: 12,
+  },
   titulo: {
     color: '#0F172A',
-    fontSize: 28,
+    fontSize: 29,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 24,
   },
-  formulario: {
+  descricao: {
+    color: '#475569',
+    fontSize: 16,
+    lineHeight: 23,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  resumo: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
+    marginBottom: 22,
   },
-  rotulo: {
-    color: '#334155',
-    fontSize: 15,
+  tituloResumo: {
+    color: '#1E293B',
+    fontSize: 17,
     fontWeight: 'bold',
-    marginBottom: 6,
+    marginBottom: 10,
   },
-  campo: {
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    fontSize: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
+  itemResumo: {
+    color: '#475569',
+    fontSize: 15,
+    marginTop: 6,
   },
-  botao: {
+  botaoPrincipal: {
     alignItems: 'center',
     backgroundColor: '#2563EB',
     borderRadius: 10,
-    padding: 14,
+    padding: 15,
   },
-  textoBotao: {
+  textoBotaoPrincipal: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  botaoSecundario: {
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#2563EB',
+    borderRadius: 10,
+    padding: 13,
+    marginTop: 12,
+  },
+  textoBotaoSecundario: {
+    color: '#1D4ED8',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 ```
 
-O `TextInput` recebe o texto digitado. A propriedade `keyboardType` solicita um teclado mais apropriado para números, mas não substitui a validação dos valores.
+`navigation.navigate()` solicita a abertura de uma rota. As rotas serão registradas em `App.js` na próxima etapa.
 
 ### Experimente
 
-Digite informações nos três campos. Observe que, por enquanto, o botão não executa nenhuma ação.
+Altere o título, a descrição ou os itens do cartão. Os botões ainda não funcionarão enquanto as rotas não forem configuradas.
 
-## 5. Etapa 3 — Controlando os campos com `useState`
+## 5. Etapa 2 — Configurando a navegação
 
-Para utilizar os valores digitados, cada campo será ligado a um estado. Importe `useState` e altere o início do componente:
+Substitua o conteúdo de `App.js` por:
 
 ```jsx
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import HomeScreen from './src/screens/HomeScreen';
+
+const Stack = createNativeStackNavigator();
+
+function TelaTemporaria() {
+  return null;
+}
 
 export default function App() {
-  const [nome, setNome] = useState('');
-  const [preco, setPreco] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-
-  function mostrarProduto() {
-    alert(`${nome} — R$ ${preco} — ${quantidade} unidade(s)`);
-  }
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
-
-      <View style={styles.formulario}>
-        <Text style={styles.rotulo}>Nome</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: Caderno"
-          value={nome}
-          onChangeText={setNome}
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Inicio"
+        screenOptions={{
+          headerStyle: { backgroundColor: '#EFF6FF' },
+          headerTintColor: '#1E3A8A',
+          headerTitleStyle: { fontWeight: 'bold' },
+        }}
+      >
+        <Stack.Screen
+          name="Inicio"
+          component={HomeScreen}
+          options={{ title: 'Início' }}
         />
-
-        <Text style={styles.rotulo}>Preço</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 19,90"
-          keyboardType="decimal-pad"
-          value={preco}
-          onChangeText={setPreco}
+        <Stack.Screen
+          name="CadastroProduto"
+          component={TelaTemporaria}
+          options={{ title: 'Cadastrar produto' }}
         />
-
-        <Text style={styles.rotulo}>Quantidade</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 10"
-          keyboardType="number-pad"
-          value={quantidade}
-          onChangeText={setQuantidade}
+        <Stack.Screen
+          name="ConsultaProdutos"
+          component={TelaTemporaria}
+          options={{ title: 'Consultar produtos' }}
         />
-
-        <Pressable style={styles.botao} onPress={mostrarProduto}>
-          <Text style={styles.textoBotao}>Cadastrar produto</Text>
-        </Pressable>
-      </View>
-    </View>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 ```
 
-Mantenha o mesmo `StyleSheet.create` da etapa anterior depois do componente.
+Agora os botões abrem telas temporárias. O cabeçalho apresenta automaticamente um botão para retornar.
 
-A ligação de cada campo tem duas partes:
-
-- `value={nome}` mostra no campo o valor guardado no estado;
-- `onChangeText={setNome}` atualiza o estado sempre que o texto muda.
-
-Esse padrão é chamado de **campo controlado**. Ao pressionar o botão, `mostrarProduto` lê os três estados.
+O `NavigationContainer` controla a navegação, enquanto `Stack.Navigator` organiza as telas em uma pilha. Cada `Stack.Screen` associa o nome de uma rota a um componente.
 
 ### Experimente
 
-Preencha os campos e pressione **Cadastrar produto**. Depois, troque a mensagem exibida pela função `mostrarProduto`.
+Abra as duas opções e use a seta do cabeçalho para retornar à tela inicial.
 
-## 6. Etapa 4 — Abrindo o banco e criando a tabela
+## 6. Etapa 3 — Criando o banco de dados
 
-Um banco SQLite contém tabelas. Nossa tabela se chamará `produtos` e terá quatro colunas:
+Crie:
+
+```text
+src/database/database.js
+```
+
+Adicione:
+
+```jsx
+export async function initializeDatabase(db) {
+  await db.execAsync(`
+    PRAGMA journal_mode = WAL;
+
+    CREATE TABLE IF NOT EXISTS produtos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      preco REAL NOT NULL,
+      quantidade INTEGER NOT NULL
+    );
+  `);
+}
+```
+
+A tabela possui:
 
 | Coluna | Tipo | Finalidade |
 |---|---|---|
-| `id` | `INTEGER` | Identificador único gerado automaticamente. |
-| `nome` | `TEXT` | Nome obrigatório do produto. |
-| `preco` | `REAL` | Preço do produto. |
-| `quantidade` | `INTEGER` | Quantidade disponível. |
+| `id` | `INTEGER` | Identificador único gerado automaticamente |
+| `nome` | `TEXT` | Nome obrigatório |
+| `preco` | `REAL` | Preço do produto |
+| `quantidade` | `INTEGER` | Quantidade em estoque |
 
-Substitua `App.js` por:
+Agora altere `App.js`. Importe o provedor e a função de inicialização:
 
 ```jsx
-import { StyleSheet, Text, View } from 'react-native';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase } from './src/database/database';
+```
 
-// Esta função é executada quando o banco é aberto pelo SQLiteProvider.
-async function criarBanco(db) {
-  await db.execAsync(`
-    PRAGMA journal_mode = WAL;
+Envolva o `NavigationContainer` com `SQLiteProvider`:
 
-    CREATE TABLE IF NOT EXISTS produtos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      preco REAL NOT NULL,
-      quantidade INTEGER NOT NULL
-    );
-  `);
-}
-
-function TelaProdutos() {
-  // Acesso ao banco fornecido pelo SQLiteProvider.
-  const db = useSQLiteContext();
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
-      <Text style={styles.mensagem}>Banco de dados pronto para uso.</Text>
-    </View>
-  );
-}
-
+```jsx
 export default function App() {
   return (
-    <SQLiteProvider databaseName="produtos.db" onInit={criarBanco}>
-      <TelaProdutos />
+    <SQLiteProvider databaseName="produtos.db" onInit={initializeDatabase}>
+      <NavigationContainer>
+        {/* mantenha o Stack.Navigator desta etapa aqui */}
+      </NavigationContainer>
     </SQLiteProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#F1F5F9',
-    padding: 24,
-  },
-  titulo: {
-    color: '#0F172A',
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  mensagem: {
-    color: '#166534',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 12,
-  },
-});
 ```
 
-O fluxo agora é:
+- `databaseName` define o nome do arquivo local;
+- `onInit` prepara o banco antes de liberar os componentes filhos;
+- `CREATE TABLE IF NOT EXISTS` não apaga uma tabela existente;
+- as telas poderão acessar o mesmo banco com `useSQLiteContext()`.
+
+## 7. Etapa 4 — Criando a tela de cadastro
+
+Crie:
 
 ```text
-App
-└── SQLiteProvider abre produtos.db
-    ├── criarBanco cria a tabela, caso ela ainda não exista
-    └── TelaProdutos acessa o banco com useSQLiteContext
+src/screens/ProductFormScreen.js
 ```
 
-Algumas partes importantes:
-
-- `databaseName="produtos.db"` define o nome do arquivo do banco;
-- `onInit={criarBanco}` executa a preparação do banco;
-- `CREATE TABLE IF NOT EXISTS` cria a tabela somente quando necessário;
-- `PRIMARY KEY AUTOINCREMENT` gera um identificador diferente para cada produto;
-- `useSQLiteContext()` fornece o banco aos componentes que estão dentro do `SQLiteProvider`;
-- `execAsync()` executa um ou mais comandos SQL sem bloquear a interface.
-
-> Declarar `const db = useSQLiteContext()` nesta etapa confirma onde o banco será acessado. Ele será efetivamente usado na próxima etapa.
-
-### Experimente
-
-Feche e abra o aplicativo. A instrução `IF NOT EXISTS` permite executar a inicialização novamente sem recriar ou apagar a tabela existente.
-
-## 7. Etapa 5 — Cadastrando produtos com `INSERT`
-
-Agora reuniremos o formulário, a validação e o banco. Substitua `App.js` pelo código a seguir:
+Adicione:
 
 ```jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Pressable,
-  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  View,
 } from 'react-native';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { useSQLiteContext } from 'expo-sqlite';
 
-async function criarBanco(db) {
-  await db.execAsync(`
-    PRAGMA journal_mode = WAL;
-
-    CREATE TABLE IF NOT EXISTS produtos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      preco REAL NOT NULL,
-      quantidade INTEGER NOT NULL
-    );
-  `);
-}
-
-function TelaProdutos() {
+export default function ProductFormScreen({ navigation, route }) {
   const db = useSQLiteContext();
+  const produto = route.params?.produto;
+  const editando = Boolean(produto);
+
   const [nome, setNome] = useState('');
   const [preco, setPreco] = useState('');
   const [quantidade, setQuantidade] = useState('');
 
-  async function cadastrarProduto() {
+  useEffect(() => {
+    if (produto) {
+      setNome(produto.nome);
+      setPreco(String(produto.preco).replace('.', ','));
+      setQuantidade(String(produto.quantidade));
+    }
+  }, [produto]);
+
+  async function salvarProduto() {
     const nomeLimpo = nome.trim();
     const precoNumerico = Number(preco.replace(',', '.'));
     const quantidadeNumerica = Number(quantidade);
@@ -448,67 +427,87 @@ function TelaProdutos() {
     }
 
     try {
-      await db.runAsync(
-        'INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)',
-        nomeLimpo,
-        precoNumerico,
-        quantidadeNumerica
-      );
+      if (editando) {
+        await db.runAsync(
+          `UPDATE produtos
+           SET nome = ?, preco = ?, quantidade = ?
+           WHERE id = ?`,
+          nomeLimpo,
+          precoNumerico,
+          quantidadeNumerica,
+          produto.id
+        );
+      } else {
+        await db.runAsync(
+          'INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)',
+          nomeLimpo,
+          precoNumerico,
+          quantidadeNumerica
+        );
+      }
 
-      setNome('');
-      setPreco('');
-      setQuantidade('');
-      Alert.alert('Sucesso', 'Produto cadastrado.');
+      Alert.alert(
+        'Sucesso',
+        editando ? 'Produto alterado.' : 'Produto cadastrado.',
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
     } catch (erro) {
       console.error(erro);
-      Alert.alert('Erro', 'Não foi possível cadastrar o produto.');
+      Alert.alert('Erro', 'Não foi possível salvar o produto.');
     }
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.conteudo}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text style={styles.titulo}>
+        {editando ? 'Alterar produto' : 'Novo produto'}
+      </Text>
+      <Text style={styles.descricao}>
+        Preencha os dados e pressione o botão para salvar.
+      </Text>
 
-      <View style={styles.formulario}>
-        <Text style={styles.rotulo}>Nome</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: Caderno"
-          value={nome}
-          onChangeText={setNome}
-        />
+      <Text style={styles.rotulo}>Nome</Text>
+      <TextInput
+        style={styles.campo}
+        placeholder="Ex.: Caderno"
+        value={nome}
+        onChangeText={setNome}
+      />
 
-        <Text style={styles.rotulo}>Preço</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 19,90"
-          keyboardType="decimal-pad"
-          value={preco}
-          onChangeText={setPreco}
-        />
+      <Text style={styles.rotulo}>Preço</Text>
+      <TextInput
+        style={styles.campo}
+        placeholder="Ex.: 19,90"
+        keyboardType="decimal-pad"
+        value={preco}
+        onChangeText={setPreco}
+      />
 
-        <Text style={styles.rotulo}>Quantidade</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 10"
-          keyboardType="number-pad"
-          value={quantidade}
-          onChangeText={setQuantidade}
-        />
+      <Text style={styles.rotulo}>Quantidade</Text>
+      <TextInput
+        style={styles.campo}
+        placeholder="Ex.: 10"
+        keyboardType="number-pad"
+        value={quantidade}
+        onChangeText={setQuantidade}
+      />
 
-        <Pressable style={styles.botao} onPress={cadastrarProduto}>
-          <Text style={styles.textoBotao}>Cadastrar produto</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
-  );
-}
-
-export default function App() {
-  return (
-    <SQLiteProvider databaseName="produtos.db" onInit={criarBanco}>
-      <TelaProdutos />
-    </SQLiteProvider>
+      <Pressable
+        style={({ pressed }) => [
+          styles.botao,
+          pressed && styles.botaoPressionado,
+        ]}
+        onPress={salvarProduto}
+      >
+        <Text style={styles.textoBotao}>
+          {editando ? 'Salvar alterações' : 'Cadastrar produto'}
+        </Text>
+      </Pressable>
+    </ScrollView>
   );
 }
 
@@ -516,19 +515,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',
+  },
+  conteudo: {
     padding: 24,
   },
   titulo: {
     color: '#0F172A',
-    fontSize: 28,
+    fontSize: 27,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 24,
   },
-  formulario: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+  descricao: {
+    color: '#64748B',
+    fontSize: 15,
+    marginTop: 7,
+    marginBottom: 24,
   },
   rotulo: {
     color: '#334155',
@@ -540,16 +540,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#CBD5E1',
     borderRadius: 10,
+    backgroundColor: '#FFFFFF',
     fontSize: 16,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
+    paddingVertical: 11,
+    marginBottom: 17,
   },
   botao: {
     alignItems: 'center',
     backgroundColor: '#2563EB',
     borderRadius: 10,
-    padding: 14,
+    padding: 15,
+    marginTop: 5,
+  },
+  botaoPressionado: {
+    opacity: 0.75,
   },
   textoBotao: {
     color: '#FFFFFF',
@@ -559,432 +564,92 @@ const styles = StyleSheet.create({
 });
 ```
 
-A instrução principal desta etapa é:
+Essa tela possui dois modos:
 
-```sql
-INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)
-```
+- sem produto nos parâmetros, executa `INSERT`;
+- com um produto nos parâmetros, preenche os campos e executa `UPDATE`.
 
-Os símbolos `?` são substituídos, na mesma ordem, por `nomeLimpo`, `precoNumerico` e `quantidadeNumerica`.
+Os valores são enviados ao SQL por parâmetros `?`. Isso separa os dados digitados do comando e evita concatenar entradas do usuário diretamente no SQL.
 
-Não monte comandos SQL concatenando os textos digitados pelo usuário. Os parâmetros `?` mantêm os valores separados do comando e ajudam a evitar injeção de SQL.
+### Ligando a tela ao navegador
 
-A função também:
-
-- remove espaços extras do nome com `trim()`;
-- aceita preço com vírgula ou ponto;
-- converte os textos numéricos com `Number()`;
-- rejeita preços negativos e quantidades que não sejam inteiras;
-- limpa os campos depois de um cadastro bem-sucedido;
-- usa `try/catch` para tratar possíveis erros do banco.
-
-### Experimente
-
-Cadastre dois produtos. Em seguida, tente cadastrar um produto sem nome e outro com quantidade negativa para conferir a validação.
-
-## 8. Etapa 6 — Consultando e exibindo os produtos
-
-Os dados já estão no banco, mas ainda não aparecem na tela. Para consultá-los, usaremos:
-
-```sql
-SELECT id, nome, preco, quantidade FROM produtos ORDER BY nome
-```
-
-Faça estas alterações no código da etapa anterior.
-
-Primeiro, importe também `useEffect`:
+Em `App.js`, importe:
 
 ```jsx
-import { useEffect, useState } from 'react';
+import ProductFormScreen from './src/screens/ProductFormScreen';
 ```
 
-Inclua `FlatList` entre os componentes importados de `react-native`:
+No `Stack.Screen` chamado `CadastroProduto`, substitua `TelaTemporaria`:
 
 ```jsx
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-```
-
-Dentro de `TelaProdutos`, logo depois dos três estados do formulário, crie o estado da lista e a função de consulta:
-
-```jsx
-const [produtos, setProdutos] = useState([]);
-
-async function consultarProdutos() {
-  try {
-    const resultado = await db.getAllAsync(
-      'SELECT id, nome, preco, quantidade FROM produtos ORDER BY nome'
-    );
-    setProdutos(resultado);
-  } catch (erro) {
-    console.error(erro);
-    Alert.alert('Erro', 'Não foi possível consultar os produtos.');
-  }
-}
-
-useEffect(() => {
-  consultarProdutos();
-}, []);
-```
-
-Depois do `INSERT`, atualize a lista antes de mostrar a mensagem:
-
-```jsx
-await consultarProdutos();
-
-setNome('');
-setPreco('');
-setQuantidade('');
-Alert.alert('Sucesso', 'Produto cadastrado.');
-```
-
-Por fim, depois do fechamento da `View` do formulário e antes do fechamento de `SafeAreaView`, adicione:
-
-```jsx
-<Text style={styles.tituloLista}>Produtos cadastrados</Text>
-
-<FlatList
-  data={produtos}
-  keyExtractor={(item) => String(item.id)}
-  contentContainerStyle={styles.lista}
-  ListEmptyComponent={
-    <Text style={styles.listaVazia}>Nenhum produto cadastrado.</Text>
-  }
-  renderItem={({ item }) => (
-    <View style={styles.produto}>
-      <Text style={styles.nomeProduto}>{item.nome}</Text>
-      <Text style={styles.detalhesProduto}>
-        R$ {Number(item.preco).toFixed(2).replace('.', ',')} · Estoque: {item.quantidade}
-      </Text>
-    </View>
-  )}
+<Stack.Screen
+  name="CadastroProduto"
+  component={ProductFormScreen}
+  options={({ route }) => ({
+    title: route.params?.produto ? 'Alterar produto' : 'Cadastrar produto',
+  })}
 />
 ```
 
-Acrescente os novos estilos dentro de `StyleSheet.create`:
+Agora o botão **Cadastrar produto** da tela inicial abre o formulário e salva no banco.
 
-```jsx
-tituloLista: {
-  color: '#0F172A',
-  fontSize: 21,
-  fontWeight: 'bold',
-  marginTop: 24,
-  marginBottom: 10,
-},
-lista: {
-  paddingBottom: 24,
-},
-listaVazia: {
-  color: '#64748B',
-  textAlign: 'center',
-  padding: 24,
-},
-produto: {
-  backgroundColor: '#FFFFFF',
-  borderRadius: 12,
-  padding: 16,
-  marginBottom: 10,
-},
-nomeProduto: {
-  color: '#0F172A',
-  fontSize: 17,
-  fontWeight: 'bold',
-},
-detalhesProduto: {
-  color: '#475569',
-  fontSize: 15,
-  marginTop: 5,
-},
-```
+### Experimente
 
-O `useEffect` executa a consulta quando `TelaProdutos` aparece pela primeira vez. O método `getAllAsync()` devolve todas as linhas encontradas como um array de objetos. Esse array é guardado em `produtos` e exibido pela `FlatList`.
+Tente salvar com campos vazios, preço negativo e quantidade decimal. Depois, cadastre dois produtos válidos.
 
-O fluxo do cadastro completo agora é:
+## 8. Etapa 5 — Criando a consulta de produtos
+
+Crie:
 
 ```text
-Usuário preenche o formulário
-        ↓
-cadastrarProduto valida os valores
-        ↓
-runAsync executa o INSERT
-        ↓
-getAllAsync executa o SELECT
-        ↓
-setProdutos atualiza o estado
-        ↓
-FlatList redesenha a lista
+src/screens/ProductsListScreen.js
 ```
 
-### Experimente
-
-Cadastre três produtos. Feche completamente o aplicativo, abra-o novamente e confirme que a lista foi recuperada do banco.
-
-## 9. Etapa 7 — Pesquisando produtos pelo nome
-
-Crie um novo estado junto aos demais estados:
+Adicione:
 
 ```jsx
-const [busca, setBusca] = useState('');
-```
-
-Altere `consultarProdutos` para receber um texto opcional:
-
-```jsx
-async function consultarProdutos(texto = '') {
-  try {
-    const resultado = await db.getAllAsync(
-      `SELECT id, nome, preco, quantidade
-       FROM produtos
-       WHERE nome LIKE ?
-       ORDER BY nome`,
-      `%${texto.trim()}%`
-    );
-    setProdutos(resultado);
-  } catch (erro) {
-    console.error(erro);
-    Alert.alert('Erro', 'Não foi possível consultar os produtos.');
-  }
-}
-```
-
-Antes do título **Produtos cadastrados**, adicione o campo de busca:
-
-```jsx
-<Text style={styles.tituloLista}>Consultar produtos</Text>
-
-<TextInput
-  style={styles.campoBusca}
-  placeholder="Digite parte do nome"
-  value={busca}
-  onChangeText={(texto) => {
-    setBusca(texto);
-    consultarProdutos(texto);
-  }}
-/>
-```
-
-Remova o antigo `Text` com `styles.tituloLista` que dizia **Produtos cadastrados**, para não deixar dois títulos seguidos.
-
-Acrescente o estilo:
-
-```jsx
-campoBusca: {
-  borderWidth: 1,
-  borderColor: '#CBD5E1',
-  borderRadius: 10,
-  backgroundColor: '#FFFFFF',
-  fontSize: 16,
-  paddingHorizontal: 12,
-  paddingVertical: 10,
-  marginBottom: 12,
-},
-```
-
-No SQL, o operador `LIKE` procura um padrão. Os sinais `%` significam que pode existir qualquer texto antes ou depois do trecho digitado. Assim, a busca `cad` pode encontrar `Caderno`.
-
-O valor pesquisado continua sendo passado por um parâmetro `?`, sem concatená-lo diretamente ao comando SQL.
-
-### Experimente
-
-Cadastre `Caderno`, `Caneta azul` e `Mochila`. Pesquise por `ca`, apague o texto e observe a lista completa reaparecer.
-
-## 10. Etapa 8 — Excluindo um produto
-
-Dentro de `TelaProdutos`, crie esta função:
-
-```jsx
-function confirmarExclusao(produto) {
-  Alert.alert(
-    'Excluir produto',
-    `Deseja excluir ${produto.nome}?`,
-    [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await db.runAsync('DELETE FROM produtos WHERE id = ?', produto.id);
-            await consultarProdutos(busca);
-          } catch (erro) {
-            console.error(erro);
-            Alert.alert('Erro', 'Não foi possível excluir o produto.');
-          }
-        },
-      },
-    ]
-  );
-}
-```
-
-No `renderItem` da `FlatList`, coloque as informações e o botão lado a lado:
-
-```jsx
-renderItem={({ item }) => (
-  <View style={styles.produto}>
-    <View style={styles.informacoesProduto}>
-      <Text style={styles.nomeProduto}>{item.nome}</Text>
-      <Text style={styles.detalhesProduto}>
-        R$ {Number(item.preco).toFixed(2).replace('.', ',')} · Estoque: {item.quantidade}
-      </Text>
-    </View>
-
-    <Pressable
-      style={styles.botaoExcluir}
-      onPress={() => confirmarExclusao(item)}
-    >
-      <Text style={styles.textoExcluir}>Excluir</Text>
-    </Pressable>
-  </View>
-)}
-```
-
-Atualize `produto` e acrescente os novos estilos:
-
-```jsx
-produto: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor: '#FFFFFF',
-  borderRadius: 12,
-  padding: 16,
-  marginBottom: 10,
-},
-informacoesProduto: {
-  flex: 1,
-},
-botaoExcluir: {
-  backgroundColor: '#FEE2E2',
-  borderRadius: 8,
-  paddingHorizontal: 12,
-  paddingVertical: 9,
-  marginLeft: 12,
-},
-textoExcluir: {
-  color: '#B91C1C',
-  fontWeight: 'bold',
-},
-```
-
-A exclusão usa o identificador do produto:
-
-```sql
-DELETE FROM produtos WHERE id = ?
-```
-
-Usar o `id` evita excluir por engano outros produtos que tenham o mesmo nome.
-
-### Experimente
-
-Cadastre dois produtos com o mesmo nome e exclua somente um deles. Confirme que cada linha possui um `id` independente.
-
-## 11. Código final completo
-
-Depois de fazer as etapas incrementais, use este código para comparar e revisar seu `App.js`:
-
-```jsx
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Alert,
   FlatList,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+import { useFocusEffect } from '@react-navigation/native';
+import { useSQLiteContext } from 'expo-sqlite';
 
-async function criarBanco(db) {
-  await db.execAsync(`
-    PRAGMA journal_mode = WAL;
-
-    CREATE TABLE IF NOT EXISTS produtos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      preco REAL NOT NULL,
-      quantidade INTEGER NOT NULL
-    );
-  `);
-}
-
-function TelaProdutos() {
+export default function ProductsListScreen({ navigation }) {
   const db = useSQLiteContext();
-  const [nome, setNome] = useState('');
-  const [preco, setPreco] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [busca, setBusca] = useState('');
   const [produtos, setProdutos] = useState([]);
+  const [busca, setBusca] = useState('');
 
-  async function consultarProdutos(texto = '') {
-    try {
-      const resultado = await db.getAllAsync(
-        `SELECT id, nome, preco, quantidade
-         FROM produtos
-         WHERE nome LIKE ?
-         ORDER BY nome`,
-        `%${texto.trim()}%`
-      );
-      setProdutos(resultado);
-    } catch (erro) {
-      console.error(erro);
-      Alert.alert('Erro', 'Não foi possível consultar os produtos.');
-    }
-  }
+  const consultarProdutos = useCallback(
+    async (texto = '') => {
+      try {
+        const resultado = await db.getAllAsync(
+          `SELECT id, nome, preco, quantidade
+           FROM produtos
+           WHERE nome LIKE ?
+           ORDER BY nome`,
+          `%${texto.trim()}%`
+        );
+        setProdutos(resultado);
+      } catch (erro) {
+        console.error(erro);
+        Alert.alert('Erro', 'Não foi possível consultar os produtos.');
+      }
+    },
+    [db]
+  );
 
-  useEffect(() => {
-    consultarProdutos();
-  }, []);
-
-  async function cadastrarProduto() {
-    const nomeLimpo = nome.trim();
-    const precoNumerico = Number(preco.replace(',', '.'));
-    const quantidadeNumerica = Number(quantidade);
-
-    if (
-      nomeLimpo === '' ||
-      preco.trim() === '' ||
-      !Number.isFinite(precoNumerico) ||
-      precoNumerico < 0 ||
-      quantidade.trim() === '' ||
-      !Number.isInteger(quantidadeNumerica) ||
-      quantidadeNumerica < 0
-    ) {
-      Alert.alert(
-        'Dados inválidos',
-        'Informe um nome, um preço válido e uma quantidade inteira.'
-      );
-      return;
-    }
-
-    try {
-      await db.runAsync(
-        'INSERT INTO produtos (nome, preco, quantidade) VALUES (?, ?, ?)',
-        nomeLimpo,
-        precoNumerico,
-        quantidadeNumerica
-      );
-
-      setNome('');
-      setPreco('');
-      setQuantidade('');
-      setBusca('');
-      await consultarProdutos();
-      Alert.alert('Sucesso', 'Produto cadastrado.');
-    } catch (erro) {
-      console.error(erro);
-      Alert.alert('Erro', 'Não foi possível cadastrar o produto.');
-    }
-  }
+  useFocusEffect(
+    useCallback(() => {
+      consultarProdutos(busca);
+    }, [busca, consultarProdutos])
+  );
 
   function confirmarExclusao(produto) {
     Alert.alert(
@@ -1009,59 +674,27 @@ function TelaProdutos() {
     );
   }
 
+  function abrirEdicao(produto) {
+    navigation.navigate('CadastroProduto', { produto });
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de produtos</Text>
-
-      <View style={styles.formulario}>
-        <Text style={styles.rotulo}>Nome</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: Caderno"
-          value={nome}
-          onChangeText={setNome}
-        />
-
-        <Text style={styles.rotulo}>Preço</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 19,90"
-          keyboardType="decimal-pad"
-          value={preco}
-          onChangeText={setPreco}
-        />
-
-        <Text style={styles.rotulo}>Quantidade</Text>
-        <TextInput
-          style={styles.campo}
-          placeholder="Ex.: 10"
-          keyboardType="number-pad"
-          value={quantidade}
-          onChangeText={setQuantidade}
-        />
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.botao,
-            pressed && styles.botaoPressionado,
-          ]}
-          onPress={cadastrarProduto}
-        >
-          <Text style={styles.textoBotao}>Cadastrar produto</Text>
-        </Pressable>
-      </View>
-
-      <Text style={styles.tituloLista}>Consultar produtos</Text>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Produtos cadastrados</Text>
 
       <TextInput
         style={styles.campoBusca}
-        placeholder="Digite parte do nome"
+        placeholder="Pesquisar pelo nome"
         value={busca}
-        onChangeText={(texto) => {
-          setBusca(texto);
-          consultarProdutos(texto);
-        }}
+        onChangeText={setBusca}
       />
+
+      <Pressable
+        style={styles.botaoNovo}
+        onPress={() => navigation.navigate('CadastroProduto')}
+      >
+        <Text style={styles.textoBotaoNovo}>+ Novo produto</Text>
+      </Pressable>
 
       <FlatList
         data={produtos}
@@ -1071,32 +704,36 @@ function TelaProdutos() {
           <Text style={styles.listaVazia}>Nenhum produto encontrado.</Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.produto}>
-            <View style={styles.informacoesProduto}>
+          <View style={styles.cartao}>
+            <View style={styles.informacoes}>
               <Text style={styles.nomeProduto}>{item.nome}</Text>
               <Text style={styles.detalhesProduto}>
-                R$ {Number(item.preco).toFixed(2).replace('.', ',')} · Estoque: {item.quantidade}
+                R$ {Number(item.preco).toFixed(2).replace('.', ',')}
+              </Text>
+              <Text style={styles.detalhesProduto}>
+                Quantidade: {item.quantidade}
               </Text>
             </View>
 
-            <Pressable
-              style={styles.botaoExcluir}
-              onPress={() => confirmarExclusao(item)}
-            >
-              <Text style={styles.textoExcluir}>Excluir</Text>
-            </Pressable>
+            <View style={styles.acoes}>
+              <Pressable
+                style={styles.botaoEditar}
+                onPress={() => abrirEdicao(item)}
+              >
+                <Text style={styles.textoEditar}>Alterar</Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.botaoExcluir}
+                onPress={() => confirmarExclusao(item)}
+              >
+                <Text style={styles.textoExcluir}>Excluir</Text>
+              </Pressable>
+            </View>
           </View>
         )}
       />
-    </SafeAreaView>
-  );
-}
-
-export default function App() {
-  return (
-    <SQLiteProvider databaseName="produtos.db" onInit={criarBanco}>
-      <TelaProdutos />
-    </SQLiteProvider>
+    </View>
   );
 }
 
@@ -1104,56 +741,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F1F5F9',
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 20,
   },
   titulo: {
     color: '#0F172A',
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 18,
-  },
-  formulario: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 18,
-  },
-  rotulo: {
-    color: '#334155',
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  campo: {
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    borderRadius: 10,
-    fontSize: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
     marginBottom: 14,
-  },
-  botao: {
-    alignItems: 'center',
-    backgroundColor: '#2563EB',
-    borderRadius: 10,
-    padding: 14,
-  },
-  botaoPressionado: {
-    opacity: 0.75,
-  },
-  textoBotao: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  tituloLista: {
-    color: '#0F172A',
-    fontSize: 21,
-    fontWeight: 'bold',
-    marginTop: 22,
-    marginBottom: 10,
   },
   campoBusca: {
     borderWidth: 1,
@@ -1162,8 +756,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     fontSize: 16,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 12,
+    paddingVertical: 11,
+  },
+  botaoNovo: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#2563EB',
+    borderRadius: 9,
+    paddingHorizontal: 15,
+    paddingVertical: 11,
+    marginTop: 12,
+    marginBottom: 14,
+  },
+  textoBotaoNovo: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   lista: {
     paddingBottom: 24,
@@ -1171,35 +777,47 @@ const styles = StyleSheet.create({
   listaVazia: {
     color: '#64748B',
     textAlign: 'center',
-    padding: 24,
+    padding: 28,
   },
-  produto: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  cartao: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 13,
     padding: 16,
-    marginBottom: 10,
+    marginBottom: 11,
   },
-  informacoesProduto: {
-    flex: 1,
+  informacoes: {
+    marginBottom: 13,
   },
   nomeProduto: {
     color: '#0F172A',
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   detalhesProduto: {
     color: '#475569',
     fontSize: 15,
-    marginTop: 5,
+    marginTop: 2,
+  },
+  acoes: {
+    flexDirection: 'row',
+  },
+  botaoEditar: {
+    backgroundColor: '#DBEAFE',
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    marginRight: 9,
+  },
+  textoEditar: {
+    color: '#1D4ED8',
+    fontWeight: 'bold',
   },
   botaoExcluir: {
     backgroundColor: '#FEE2E2',
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 9,
-    marginLeft: 12,
   },
   textoExcluir: {
     color: '#B91C1C',
@@ -1208,99 +826,211 @@ const styles = StyleSheet.create({
 });
 ```
 
-## 12. Teste final
+Essa tela executa três operações:
 
-1. Abra o aplicativo e confirme que a mensagem de lista vazia aparece.
-2. Tente cadastrar um produto com um campo vazio e confira a validação.
-3. Cadastre pelo menos três produtos com preços e quantidades diferentes.
-4. Confira se os produtos aparecem em ordem alfabética.
-5. Pesquise usando somente uma parte do nome.
-6. Apague a pesquisa e confirme que todos os produtos reaparecem.
-7. Exclua um produto e confirme a operação.
-8. Feche completamente o aplicativo e abra-o novamente.
-9. Confira se os produtos restantes continuam cadastrados.
+```sql
+SELECT id, nome, preco, quantidade FROM produtos
+WHERE nome LIKE ? ORDER BY nome
+```
 
-## 13. Entendendo as operações CRUD
+```sql
+DELETE FROM produtos WHERE id = ?
+```
 
-CRUD é uma sigla para as quatro operações básicas realizadas com dados:
+E envia o produto selecionado para a tela responsável pelo `UPDATE`:
 
-| Operação | Significado | SQL | Situação no projeto |
-|---|---|---|---|
-| Create | Criar | `INSERT` | Cadastrar produto. |
-| Read | Ler | `SELECT` | Listar e pesquisar produtos. |
-| Update | Atualizar | `UPDATE` | Proposto nos desafios. |
-| Delete | Excluir | `DELETE` | Excluir produto. |
+```jsx
+navigation.navigate('CadastroProduto', { produto });
+```
 
-O aplicativo já implementa três dessas quatro operações.
+O `useFocusEffect` atualiza a lista sempre que a tela volta a ficar ativa. Isso é importante depois de cadastrar ou alterar um produto.
 
-## 14. Desafios graduais
+### Ligando a consulta ao navegador
 
-Faça um desafio por vez:
+Em `App.js`, importe:
+
+```jsx
+import ProductsListScreen from './src/screens/ProductsListScreen';
+```
+
+No `Stack.Screen` chamado `ConsultaProdutos`, substitua `TelaTemporaria`:
+
+```jsx
+<Stack.Screen
+  name="ConsultaProdutos"
+  component={ProductsListScreen}
+  options={{ title: 'Consultar produtos' }}
+/>
+```
+
+Remova também a função `TelaTemporaria`, pois ela não é mais necessária.
+
+### Experimente
+
+Abra a consulta, pesquise parte de um nome e apague a pesquisa. Depois, altere e exclua produtos diferentes.
+
+## 9. Código final de `App.js`
+
+Depois de concluir as etapas, compare seu arquivo com este:
+
+```jsx
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SQLiteProvider } from 'expo-sqlite';
+
+import { initializeDatabase } from './src/database/database';
+import HomeScreen from './src/screens/HomeScreen';
+import ProductFormScreen from './src/screens/ProductFormScreen';
+import ProductsListScreen from './src/screens/ProductsListScreen';
+
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  return (
+    <SQLiteProvider databaseName="produtos.db" onInit={initializeDatabase}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Inicio"
+          screenOptions={{
+            headerStyle: { backgroundColor: '#EFF6FF' },
+            headerTintColor: '#1E3A8A',
+            headerTitleStyle: { fontWeight: 'bold' },
+          }}
+        >
+          <Stack.Screen
+            name="Inicio"
+            component={HomeScreen}
+            options={{ title: 'Início' }}
+          />
+          <Stack.Screen
+            name="CadastroProduto"
+            component={ProductFormScreen}
+            options={({ route }) => ({
+              title: route.params?.produto
+                ? 'Alterar produto'
+                : 'Cadastrar produto',
+            })}
+          />
+          <Stack.Screen
+            name="ConsultaProdutos"
+            component={ProductsListScreen}
+            options={{ title: 'Consultar produtos' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SQLiteProvider>
+  );
+}
+```
+
+Revise a estrutura final:
+
+```text
+MeuCadastroDeProdutos/
+├── App.js
+└── src/
+    ├── database/
+    │   └── database.js
+    └── screens/
+        ├── HomeScreen.js
+        ├── ProductFormScreen.js
+        └── ProductsListScreen.js
+```
+
+O fluxo entre as telas é:
+
+```text
+Início
+├── Cadastrar produto ──> Formulário ──> INSERT
+└── Consultar produtos ─> Lista
+                            ├── Novo ───> Formulário ──> INSERT
+                            ├── Alterar > Formulário ──> UPDATE
+                            └── Excluir ───────────────> DELETE
+```
+
+## 10. Entendendo o cadastro e a alteração na mesma tela
+
+A tela `ProductFormScreen` verifica se recebeu um produto:
+
+```jsx
+const produto = route.params?.produto;
+const editando = Boolean(produto);
+```
+
+Ao cadastrar pela tela inicial, nenhum parâmetro é enviado. Portanto, `editando` é `false` e a tela executa `INSERT`.
+
+Ao pressionar **Alterar** na lista, o produto é enviado como parâmetro. O `useEffect` copia seus dados para os campos, `editando` é `true` e a tela executa `UPDATE` usando o `id`.
+
+Reutilizar o formulário evita manter duas telas quase iguais.
+
+## 11. Teste final
+
+1. Abra o aplicativo e confira as informações da tela inicial.
+2. Pressione **Cadastrar produto**.
+3. Tente salvar o formulário vazio e confira a validação.
+4. Cadastre pelo menos três produtos.
+5. Retorne ao início e abra **Consultar produtos**.
+6. Confira se a lista está em ordem alfabética.
+7. Pesquise por parte de um nome.
+8. Pressione **Alterar**, modifique os dados e salve.
+9. Confira a alteração na lista.
+10. Exclua um produto e confirme a operação.
+11. Feche completamente o aplicativo e abra-o novamente.
+12. Confira se os produtos restantes continuam armazenados.
+
+## 12. Desafios graduais
 
 1. Mostre o `id` de cada produto na lista.
-2. Destaque com outra cor os produtos cuja quantidade seja zero.
-3. Adicione um campo `categoria` à tabela e ao formulário.
-4. Adicione um botão para aumentar o estoque em uma unidade usando `UPDATE`.
-5. Crie uma tela ou formulário para editar nome, preço e quantidade.
-6. Mostre a quantidade total de itens em estoque usando `SUM(quantidade)`.
-7. Mostre o número de produtos cadastrados usando `COUNT(*)`.
-8. Adicione uma ordenação por menor preço e por maior preço.
+2. Mostre uma mensagem diferente quando a quantidade for zero.
+3. Adicione o campo `categoria` ao cadastro e à consulta.
+4. Mostre o total de unidades com `SUM(quantidade)`.
+5. Mostre a quantidade de produtos com `COUNT(*)`.
+6. Adicione opções para ordenar por nome, preço ou quantidade.
+7. Crie uma tela com produtos sem estoque.
+8. Desabilite o botão enquanto uma operação estiver sendo executada.
 
-> Depois que uma tabela já existe, mudar somente o comando `CREATE TABLE IF NOT EXISTS` não altera sua estrutura. Para adicionar colunas em um aplicativo que já possui dados, estude migrações e o comando `ALTER TABLE`.
+> Depois que uma tabela existe, mudar apenas `CREATE TABLE IF NOT EXISTS` não altera sua estrutura. Para adicionar colunas sem perder dados, estude migrações e `ALTER TABLE`.
 
-## 15. Problemas comuns
+## 13. Problemas comuns
 
 | Problema | Possível solução |
 |---|---|
-| `Unable to resolve expo-sqlite` | Interrompa o Expo, execute `npx expo install expo-sqlite` e inicie novamente. |
-| `useSQLiteContext must be used within a SQLiteProvider` | Confira se `TelaProdutos` está dentro de `SQLiteProvider`. |
-| `no such table: produtos` | Confira o nome da tabela e se `onInit={criarBanco}` está presente. |
-| O produto é salvo, mas não aparece | Execute `await consultarProdutos()` depois do `INSERT`. |
-| A lista não aparece ao abrir | Confira o `useEffect` e o `import { useEffect } from 'react'`. |
-| O preço com vírgula é rejeitado | Confira `preco.replace(',', '.')` antes da conversão. |
-| A quantidade decimal é rejeitada | Isso é intencional: a validação usa `Number.isInteger`. |
-| Os dados desapareceram | Reinstalar o aplicativo, limpar os dados do app ou limpar o armazenamento do navegador pode remover o banco local. |
+| `Unable to resolve expo-sqlite` | Execute `npx expo install expo-sqlite` e reinicie o Expo. |
+| `Unable to resolve @react-navigation...` | Refaça os comandos de instalação da navegação. |
+| `useSQLiteContext must be used within a SQLiteProvider` | Confira se o navegador está dentro de `SQLiteProvider`. |
+| `no such table: produtos` | Confira `onInit={initializeDatabase}` e o nome da tabela. |
+| Uma tela não é encontrada | Confira nome, caminho, `export default` e `import`. |
+| O botão não abre a tela | O nome usado em `navigate` deve ser idêntico ao do `Stack.Screen`. |
+| A lista não atualiza após editar | Confira o `useFocusEffect` em `ProductsListScreen.js`. |
+| O preço com vírgula é rejeitado | Confira `preco.replace(',', '.')`. |
+| Campos numéricos vazios viram zero | Confira os testes `preco.trim() === ''` e `quantidade.trim() === ''`. |
+| Os dados desapareceram | Reinstalar ou limpar os dados do aplicativo remove o banco local. |
 | Uma alteração antiga continua aparecendo | Execute `npx expo start --clear`. |
-| O aplicativo exibe uma tela vermelha | Leia a primeira mensagem do erro e confira chaves, parênteses, vírgulas e importações. |
-
-## 16. Teste opcional no navegador
-
-O suporte web do `expo-sqlite` utiliza WebAssembly e exige configuração adicional do Metro e cabeçalhos que permitam `SharedArrayBuffer`. Esse suporte pode ter diferenças em relação ao Android e ao iOS.
-
-Se seu objetivo é aprender SQLite pela primeira vez, conclua o tutorial em um dispositivo ou emulador. Se também precisar da versão web, siga a seção **Web setup** da documentação oficial correspondente à versão do Expo instalada no projeto.
-
-Confira sua versão com:
-
-```bash
-npx expo --version
-npm list expo expo-sqlite
-```
-
-Não copie configurações de outra versão sem conferir a documentação, pois os requisitos do suporte web podem mudar.
 
 ## Checklist de aprendizagem
 
-- [ ] Criei e executei um projeto Expo com o template `blank`.
-- [ ] Instalei `expo-sqlite` com `npx expo install`.
-- [ ] Criei campos controlados com `useState`.
-- [ ] Converti e validei os dados digitados.
-- [ ] Abri o banco com `SQLiteProvider`.
-- [ ] Acessei o banco com `useSQLiteContext`.
+- [ ] Criei as pastas `src/database` e `src/screens`.
+- [ ] Separei banco, navegação e telas em arquivos diferentes.
+- [ ] Criei uma tela inicial com informações e dois botões.
+- [ ] Configurei a navegação em pilha.
+- [ ] Instalei e configurei `expo-sqlite`.
 - [ ] Criei a tabela com `CREATE TABLE IF NOT EXISTS`.
-- [ ] Cadastrei produtos com `runAsync()` e `INSERT`.
-- [ ] Passei os valores SQL usando parâmetros `?`.
-- [ ] Consultei produtos com `getAllAsync()` e `SELECT`.
-- [ ] Exibi os resultados com `FlatList`.
-- [ ] Pesquisei pelo nome usando `LIKE`.
-- [ ] Excluí um produto usando seu `id`.
-- [ ] Confirmei que os dados permanecem depois de reiniciar o aplicativo.
+- [ ] Cadastrei produtos com `INSERT`.
+- [ ] Consultei produtos com `SELECT`.
+- [ ] Pesquisei pelo nome com `LIKE`.
+- [ ] Reaproveitei o formulário para executar `UPDATE`.
+- [ ] Excluí pelo `id` com `DELETE`.
+- [ ] Usei parâmetros `?` nos comandos SQL.
+- [ ] Atualizei a lista com `useFocusEffect`.
+- [ ] Confirmei a persistência depois de reiniciar o aplicativo.
 
 ## Referências oficiais
 
 - [Criar um projeto Expo](https://docs.expo.dev/get-started/create-a-project/)
 - [SQLite no Expo](https://docs.expo.dev/versions/latest/sdk/sqlite/)
-- [Estado de um componente com `useState`](https://react.dev/reference/react/useState)
-- [Sincronização com `useEffect`](https://react.dev/reference/react/useEffect)
+- [Primeiros passos com React Navigation](https://reactnavigation.org/docs/getting-started/)
+- [Navegação Native Stack](https://reactnavigation.org/docs/native-stack-navigator/)
+- [Hook `useFocusEffect`](https://reactnavigation.org/docs/use-focus-effect/)
 - [TextInput no React Native](https://reactnative.dev/docs/textinput)
 - [FlatList no React Native](https://reactnative.dev/docs/flatlist)
 - [Linguagem SQL do SQLite](https://www.sqlite.org/lang.html)
