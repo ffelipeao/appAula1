@@ -1,135 +1,88 @@
-# 🚀 AppAula1 - Meu Primeiro Projeto React Native
+# 📱 Tutoriais de React Native para sala de aula
 
-## 📱 Sobre o Projeto
+Este repositório reúne uma sequência de tutoriais práticos para o ensino de desenvolvimento mobile com **React Native** e **Expo**. O material foi organizado para acompanhar a evolução dos estudantes: da configuração do ambiente até a criação de aplicativos com navegação, persistência local e operações CRUD.
 
-Este é um aplicativo móvel desenvolvido em **React Native** como parte de um projeto de aula. O objetivo é aprender os conceitos básicos de desenvolvimento mobile multiplataforma, criando uma aplicação simples e funcional.
+Cada tutorial apresenta explicações, exemplos de código, atividades de verificação e desafios. Os projetos são construídos gradualmente para que cada novo conceito possa ser testado antes da próxima etapa.
 
-## 🎯 O que é React Native?
+## 🎯 Para quem é este material
 
-**React Native** é um framework desenvolvido pelo Facebook que permite criar aplicativos móveis nativos usando JavaScript e React. Com ele, você pode desenvolver para iOS e Android usando uma única base de código, economizando tempo e recursos.
+- estudantes iniciantes em React Native;
+- professores que desejam usar roteiros práticos em aula;
+- pessoas que já conhecem lógica de programação e querem começar no desenvolvimento mobile;
+- turmas que utilizam Android, iOS ou Expo Go para acompanhar as atividades.
 
-## ✨ Funcionalidades do App
+## 📚 Sequência de tutoriais
 
-- **Tela de Boas-vindas** com título personalizado
-- **Campo de entrada de texto** para o usuário digitar seu nome
-- **Botão interativo** que responde ao toque
-- **Interface responsiva** que se adapta a diferentes tamanhos de tela
-- **Design limpo e moderno** com estilos CSS personalizados
+Recomenda-se seguir os materiais na ordem abaixo:
 
-## 🛠️ Tecnologias Utilizadas
+| Aula | Tutorial | Principais conteúdos |
+|---:|---|---|
+| 1 | [Instalação e configuração do ambiente](1-tutorial_instalacao_configuracao.md) | Node.js, VS Code, Expo, Expo Go, primeiro projeto e GitHub |
+| 2 | [Primeiro aplicativo Expo](2-tutorial_primeiro_projeto_expo.md) | Componentes básicos, `StyleSheet`, `TextInput`, `useState`, eventos, imagens e listas |
+| 3 | [Estado, estilos e navegação](3-tutorial_projeto_expo_incremental_com_navegacao.md) | Aplicativo de hábitos, estado, conteúdo condicional, organização em telas e navegação inferior |
+| 4 | [Navegação e SQLite](4-tutorial_projeto_expo_incremental_com_sqlite.md) | Aplicativo de produtos, banco local, pesquisa e CRUD completo |
+| 5 | [Novos campos e cadastro de usuários](5-tutorial_incluir_novos_campos_e_cadastro_usuario.md) | Evolução do banco, novos campos de produtos e CRUD de usuários |
 
-- **React Native** - Framework principal
-- **Expo** - Plataforma de desenvolvimento
-- **JavaScript** - Linguagem de programação
-- **CSS-in-JS** - Estilização com StyleSheet
+## 🧭 Trilha de aprendizagem
 
-## 📋 Pré-requisitos
+Ao concluir a sequência, o estudante terá praticado:
 
-Para executar este projeto, você precisará ter instalado:
+1. preparação do ambiente de desenvolvimento;
+2. criação e execução de projetos com Expo;
+3. componentes, propriedades, estilos e layouts;
+4. entrada de dados, eventos e gerenciamento de estado;
+5. organização do aplicativo em arquivos e telas;
+6. navegação entre páginas;
+7. armazenamento local com SQLite;
+8. cadastro, consulta, alteração e exclusão de dados.
 
-- **Node.js LTS** (versão 22.11 ou superior; não use versões ímpares)
-- **npm** (incluído com o Node.js)
-- **Expo CLI local** (executada com `npx expo`, sem instalação global)
-- **Android Studio** (para desenvolvimento Android)
-- **Xcode** (para desenvolvimento iOS - apenas macOS)
+## 🛠️ Pré-requisitos
 
-## 🚀 Como Executar o Projeto
+Para começar, tenha disponível:
 
-### 1. Clone o repositório
-```bash
-git clone [URL_DO_SEU_REPOSITORIO]
-cd appAula1
+- **Node.js LTS** compatível com a versão atual do Expo;
+- **npm**, instalado junto com o Node.js;
+- **Visual Studio Code** ou outro editor de sua preferência;
+- **Expo Go** em um dispositivo móvel ou um emulador Android/iOS;
+- conhecimentos básicos de lógica de programação e JavaScript.
+
+O primeiro tutorial orienta a instalação e a verificação dessas ferramentas. Os comandos usam a CLI local do Expo por meio de `npx`, portanto não é necessário instalar a Expo CLI globalmente.
+
+## ▶️ Como usar em aula
+
+1. Abra o tutorial correspondente à aula.
+2. Execute as etapas na ordem apresentada.
+3. Salve e teste o aplicativo depois de cada alteração.
+4. Discuta o resultado antes de avançar para o próximo conceito.
+5. Use os desafios finais como exercício individual ou atividade avaliativa.
+
+Os tutoriais 3, 4 e 5 formam uma progressão. Em especial, o tutorial 5 parte do aplicativo desenvolvido no tutorial 4.
+
+## 📂 Organização do repositório
+
+```text
+.
+├── 1-tutorial_instalacao_configuracao.md
+├── 2-tutorial_primeiro_projeto_expo.md
+├── 3-tutorial_projeto_expo_incremental_com_navegacao.md
+├── 4-tutorial_projeto_expo_incremental_com_sqlite.md
+├── 5-tutorial_incluir_novos_campos_e_cadastro_usuario.md
+└── README.md
 ```
 
-### 2. Instale as dependências
-```bash
-npm install
-# ou
-yarn install
-```
+Este repositório contém os **roteiros das aulas**. Durante cada tutorial, os estudantes criam os projetos e arquivos necessários seguindo as instruções apresentadas.
 
-### 3. Execute o projeto
-```bash
-npx expo start
-```
+## 🔗 Documentação oficial
 
-### 4. Escaneie o QR Code
-- Use o app **Expo Go** no seu celular para escanear o QR code
-- ou precione **w** para abrir direto no seu navegador
-- Ou pressione **a** para abrir no Android Simulator
-- Ou pressione **i** para abrir no iOS Simulator
+- [React Native](https://reactnative.dev/docs/getting-started)
+- [Expo](https://docs.expo.dev/)
+- [React Navigation](https://reactnavigation.org/docs/getting-started)
+- [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
 
-## 📱 Estrutura do Projeto
+## 🤝 Contribuições
 
-```
-appAula1/
-├── App.js              # Componente principal da aplicação
-├── app.json            # Configurações do Expo
-├── package.json        # Dependências do projeto
-├── assets/             # Imagens e recursos
-│   ├── favicon.png
-│   ├── icon.png
-│   ├── splash-icon.png
-│   └── logo_estacio.png
-└── README.md           # Este arquivo
-```
+Correções, sugestões de atividades e melhorias didáticas são bem-vindas. Ao propor uma alteração, procure manter a abordagem incremental e explicar os conceitos antes de apresentar soluções completas.
 
-## 🎨 Componentes Utilizados
+## 📄 Uso
 
-### App.js
-- **View**: Container principal que organiza o layout
-- **Text**: Exibe textos na tela
-- **Image**: Mostra imagens
-- **TextInput**: Campo de entrada de texto
-- **TouchableOpacity**: Botão que responde ao toque
-- **StatusBar**: Barra de status do sistema
-
-## 🎯 Conceitos Aprendidos
-
-Este projeto demonstra:
-
-1. **Componentes básicos** do React Native
-2. **Estilização** com StyleSheet
-3. **Layout responsivo** com Flexbox
-4. **Integração de recursos** (imagens, textos, inputs)
-5. **Estrutura de projeto** React Native
-
-## 🔧 Personalização
-
-Para personalizar o app, você pode:
-
-- Alterar cores no arquivo `App.js`
-- Modificar textos e mensagens
-- Adicionar novas funcionalidades
-- Alterar imagens na pasta `assets/`
-- Ajustar estilos CSS
-
-## 📚 Recursos para Aprendizado
-
-- [Tutorial prático: primeiro projeto, componentes, estilos e conteúdo dinâmico](tutorial_primeiro_projeto_expo.md)
-- [Tutorial incremental: estado, estilos dinâmicos e navegação entre páginas](tutorial_projeto_expo_incremental_com_navegacao.md)
-- [Documentação oficial do React Native](https://reactnative.dev/)
-- [Documentação do Expo](https://docs.expo.dev/)
-- [Guia de estilos React Native](https://reactnative.dev/docs/style)
-- [Tutorial de componentes](https://reactnative.dev/docs/components-and-apis)
-
-## 🤝 Contribuição
-
-Este é um projeto educacional, mas sugestões e melhorias são sempre bem-vindas! Sinta-se à vontade para:
-
-- Reportar bugs
-- Sugerir novas funcionalidades
-- Melhorar a documentação
-- Compartilhar conhecimento
-
-## 📄 Licença
-
-Este projeto foi criado para fins educacionais como parte de uma aula de React Native.
-
-## 👨‍💻 Autor
-
-Desenvolvido como projeto de aula para aprender React Native.
-
----
-
-**💡 Dica**: Este é um excelente ponto de partida para quem está começando com desenvolvimento mobile! Continue explorando e experimentando com diferentes componentes e funcionalidades.
+Material produzido para fins educacionais e para apoio a aulas de React Native.
