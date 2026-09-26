@@ -1,6 +1,6 @@
 # 📱 Tutoriais de React Native para sala de aula
 
-Este repositório reúne uma sequência de tutoriais práticos para o ensino de desenvolvimento mobile com **React Native** e **Expo**. O material foi organizado para acompanhar a evolução dos estudantes: da configuração do ambiente até a criação de aplicativos com navegação, persistência local e operações CRUD.
+Este repositório reúne uma sequência de tutoriais práticos para o ensino de desenvolvimento mobile com **React Native** e **Expo**. O material foi organizado para acompanhar a evolução dos estudantes: da configuração do ambiente até a criação de aplicativos com navegação, persistência local, operações CRUD e autenticação.
 
 Cada tutorial apresenta explicações, exemplos de código, atividades de verificação e desafios. Os projetos são construídos gradualmente para que cada novo conceito possa ser testado antes da próxima etapa.
 
@@ -22,6 +22,7 @@ Recomenda-se seguir os materiais na ordem abaixo:
 | 3 | [Estado, estilos e navegação](3-tutorial_projeto_expo_incremental_com_navegacao.md) | Aplicativo de hábitos, estado, conteúdo condicional, organização em telas e navegação inferior |
 | 4 | [Navegação e SQLite](4-tutorial_projeto_expo_incremental_com_sqlite.md) | Aplicativo de produtos, banco local, pesquisa e CRUD completo |
 | 5 | [Novos campos e cadastro de usuários](5-tutorial_incluir_novos_campos_e_cadastro_usuario.md) | Evolução do banco, novos campos de produtos e CRUD de usuários |
+| 6 | [Autenticação com Firebase](6-tutorial_autenticacao_firebase_email_senha.md) | Projeto Firebase, planos, criação de conta, login, sessão persistente e rotas protegidas |
 
 ## 🧭 Trilha de aprendizagem
 
@@ -34,7 +35,8 @@ Ao concluir a sequência, o estudante terá praticado:
 5. organização do aplicativo em arquivos e telas;
 6. navegação entre páginas;
 7. armazenamento local com SQLite;
-8. cadastro, consulta, alteração e exclusão de dados.
+8. cadastro, consulta, alteração e exclusão de dados;
+9. autenticação com e-mail e senha usando Firebase.
 
 ## 🛠️ Pré-requisitos
 
@@ -56,7 +58,7 @@ O primeiro tutorial orienta a instalação e a verificação dessas ferramentas.
 4. Discuta o resultado antes de avançar para o próximo conceito.
 5. Use os desafios finais como exercício individual ou atividade avaliativa.
 
-Os tutoriais 3, 4 e 5 formam uma progressão. Em especial, o tutorial 5 parte do aplicativo desenvolvido no tutorial 4.
+Os tutoriais 3 a 6 formam uma progressão. O tutorial 5 parte do aplicativo desenvolvido no tutorial 4, e o tutorial 6 adiciona autenticação a esse projeto.
 
 ## 📂 Organização do repositório
 
@@ -67,6 +69,7 @@ Os tutoriais 3, 4 e 5 formam uma progressão. Em especial, o tutorial 5 parte do
 ├── 3-tutorial_projeto_expo_incremental_com_navegacao.md
 ├── 4-tutorial_projeto_expo_incremental_com_sqlite.md
 ├── 5-tutorial_incluir_novos_campos_e_cadastro_usuario.md
+├── 6-tutorial_autenticacao_firebase_email_senha.md
 └── README.md
 ```
 
@@ -78,6 +81,7 @@ Este repositório contém os **roteiros das aulas**. Durante cada tutorial, os e
 - [Expo](https://docs.expo.dev/)
 - [React Navigation](https://reactnavigation.org/docs/getting-started)
 - [Expo SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/)
+- [Firebase Authentication](https://firebase.google.com/docs/auth/)
 
 ## 🤝 Contribuições
 
